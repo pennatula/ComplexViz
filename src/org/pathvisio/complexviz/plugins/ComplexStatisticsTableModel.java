@@ -1,0 +1,148 @@
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2011 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package org.pathvisio.complexviz.plugins;
+
+import java.awt.Component;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Collections;
+import java.util.Comparator;
+
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
+
+import org.pathvisio.desktop.util.ListWithPropertiesTableModel;
+
+
+/**
+ * 
+ * Table Model for showing statistics results
+ */
+class ComplexStatisticsTableModel extends ListWithPropertiesTableModel<Column, ComplexStatisticsResult>
+{
+	private static final long serialVersionUID = 1L;
+
+	// array of columns we are going to save
+	private Column[] saveColumns;
+
+	public ComplexStatisticsTableModel() {
+			saveColumns = new Column[] {
+					Column.COMPLEX_NAME, Column.COMPLEX_ID, Column.R, Column.TOTAL, Column.PERCENT};
+	}
+
+	public void printData(PrintStream out) throws IOException
+	{
+
+		// print table header
+		{
+			boolean first = true;
+			for (Column col : saveColumns)
+			{
+				if (!first)
+				{
+					out.print ("\t");
+				}
+				first = false;
+				out.print (col.title);
+			}
+			out.println ();
+		}
+
+		// print table rows
+		for (ComplexStatisticsResult sr : rows)
+		{
+			boolean first = true;
+			for (Column col : saveColumns)
+			{
+				if (!first)
+				{
+					out.print ("\t");
+				}
+				first = false;
+				out.print (sr.getProperty(col));
+			}
+			out.println();
+		}
+	}
+
+	/**
+	 * Sort results on z-score
+	 */
+	public void sort()
+	{
+		Collections.sort (rows, new Comparator<ComplexStatisticsResult>()
+		{
+
+			public int compare(ComplexStatisticsResult arg0, ComplexStatisticsResult arg1)
+			{
+				double z1 = arg1.getZScore();
+				double z0 = arg0.getZScore();
+
+				if (Double.isNaN(z1) && Double.isNaN(z0)) return 0;
+				if (Double.isNaN(z1)) return -1;
+				if (Double.isNaN(z0)) return 1;
+				return Double.compare(z1, z0);
+			}
+		});
+		fireTableDataChanged();
+	}
+
+	/**
+    // Returns the preferred height of a row.
+    // The result is equal to the tallest cell in the row.
+     */
+    public static int getPreferredRowHeight(JTable table, int rowIndex, int margin) {
+        // Get the current default height for all rows
+        int height = table.getRowHeight();
+
+        // Determine highest cell in the row
+        for (int c=0; c<table.getColumnCount(); c++) {
+            TableCellRenderer renderer = table.getCellRenderer(rowIndex, c);
+            Component comp = table.prepareRenderer(renderer, rowIndex, c);
+            int h = comp.getPreferredSize().height + 2*margin;
+            height = Math.max(height, h);
+        }
+        return height;
+    }
+
+    /**
+     * The height of each row is set to the preferred height of the
+     * tallest cell in that row.
+     */
+    static public void packRows(JTable table, int margin)
+    {
+        packRows(table, 0, table.getRowCount(), margin);
+    }
+
+    /**
+    // For each row >= start and < end, the height of a
+    // row is set to the preferred height of the tallest cell
+    // in that row.
+     */
+    public static void packRows(JTable table, int start, int end, int margin) {
+        for (int r=0; r<table.getRowCount(); r++) {
+            // Get the preferred height
+            int h = getPreferredRowHeight(table, r, margin);
+
+            // Now set the row height using the preferred height
+            if (table.getRowHeight(r) != h) {
+                table.setRowHeight(r, h);
+            }
+        }
+    }
+
+}
