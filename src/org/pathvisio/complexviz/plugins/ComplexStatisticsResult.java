@@ -24,19 +24,19 @@ import org.pathvisio.desktop.util.RowWithProperties;
  */
 public class ComplexStatisticsResult implements RowWithProperties<Column>
 {
-	private int r = 0;
-	private int total = 0;
+	private float r = 0;
+	private float total = 0;
 	private String name;
 	private String id;
-	private double z = 0;
+	private float p = 0;
 	
-	ComplexStatisticsResult (String name, String id, int r, int total, double z)
+	ComplexStatisticsResult (String name, String id, float complexComponentPositive, float complexComponentTotal, float p)
 	{
-		this.r = r;
-		this.total = total;
+		this.r = complexComponentPositive;
+		this.total = complexComponentTotal;
 		this.name = name;
 		this.id = id;
-		this.z = z;
+		this.p = p;
 	}
 
 	public String getProperty(Column prop)
@@ -47,13 +47,13 @@ public class ComplexStatisticsResult implements RowWithProperties<Column>
 		case TOTAL: return "" + total;
 		case COMPLEX_NAME: return name;
 		case COMPLEX_ID: return id;
-		case PERCENT: return String.format ("%3.2f", (float)z);
+		case PERCENT: return String.format ("%3.2f", (float)p);
 		default : throw new IllegalArgumentException("Unknown property");
 		}
 	}
 
-	public double getZScore()
+	public float getZScore()
 	{
-		return z;
+		return p;
 	}
 }

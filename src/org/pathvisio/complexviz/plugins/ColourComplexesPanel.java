@@ -50,7 +50,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.jdom.Element;
-import org.pathvisio.complexviz.gui.ComplexLegendPane;
+import org.pathvisio.complexviz.gui.ComplexLegendPanel;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.desktop.util.TextFieldUtils;
 import org.pathvisio.desktop.visualization.ColorGradient;
@@ -70,7 +70,7 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class ColourComplexesPanel extends JPanel implements ActionListener {
 	
-	private ComplexLegendPane lp;
+	private ComplexLegendPanel lp;
 
 	private class CriterionPanel extends JPanel {
 		/**
@@ -417,12 +417,12 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 	public ColourComplexesPanel(final ColourComplexes method, ColorSetManager csm) {
 		this.method = method;
 		this.csm = csm;
-		lp = new ComplexLegendPane();
+//		lp = new ComplexLegendPanel();
 		model = RULE_MODEL;
 				
 		method.setDefaultExpresion();
 		method.setComplexColours();
-		lp.addDefault();
+//		lp.addDefault();
 		setLayout(new FormLayout(
 				"4dlu, pref, 4dlu, pref, fill:pref:grow, 4dlu",
 				"4dlu, pref, 4dlu, fill:pref:grow, 4dlu"));
@@ -448,16 +448,16 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 		rgBasic.addActionListener(this);
 		buttons.add(rgBasic);
 		
-		/*
-		 * Update Legend
-		 */
-		final JButton legendbtn = new JButton("Update Legend");
-		legendbtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae2) {
-				updateLegend();
-			}
-		});
+//		/*
+//		 * Update Legend
+//		 */
+//		final JButton legendbtn = new JButton("Update Legend");
+//		legendbtn.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent ae2) {
+//				updateLegend();
+//			}
+//		});
 
 		final CellConstraints cc = new CellConstraints();
 //		add(rbBasic, cc.xy(2, 2));
@@ -466,7 +466,7 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 
 		btnPanel.add(rbBasic);
 		btnPanel.add(rgBasic);
-		btnPanel.add(legendbtn);
+//		btnPanel.add(legendbtn);
 		
 		add(btnPanel,cc.xyw(2, 2, 4));
 		
@@ -487,9 +487,9 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 
 	}
 
-	protected void updateLegend() {
-		lp.addColours(useGradient,useRule);
-}
+//	protected void updateLegend() {
+//		lp.addColours(useGradient,useRule);
+//}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

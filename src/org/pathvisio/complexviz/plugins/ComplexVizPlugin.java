@@ -18,7 +18,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.bridgedb.Xref;
-import org.pathvisio.complexviz.gui.ComplexLegendPane;
+import org.pathvisio.complexviz.gui.ComplexLegendPanel;
 import org.pathvisio.complexviz.gui.ComplexVizDialog;
 import org.pathvisio.complexviz.gui.ComplexVizTab;
 import org.pathvisio.core.ApplicationEvent;
@@ -64,7 +64,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 
 		public VisualizationAction(PvDesktop ste) {
 			this.ste = ste;
-			putValue(NAME, "VizPro options");
+			putValue(NAME, "ComplexViz options");
 			mainPanel = ste.getSwingEngine().getApplicationPanel();
 			setEnabled(ste.getGexManager().isConnected());
 			ste.getGexManager().addListener(this);
@@ -125,12 +125,11 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 	private Set<PathwayElement> compwe = new HashSet<PathwayElement>();
 
 	private String selectedElementId;
-	private ComplexLegendPane legendtab;
+	private ComplexLegendPanel legendtab;
 	private String COMPLEX_ID = "complex_id";
 
 	// private final VizProAction vizproAction = new VizProAction(true);
 
-	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void applicationEvent(ApplicationEvent e) {
 		switch (e.getType()) {
@@ -154,6 +153,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 			}
 		}
 			break;
+			
 		case VPATHWAY_DISPOSED: {
 			((VPathway) e.getSource()).removeSelectionListener(this);
 		}
@@ -176,7 +176,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		/*
 		 * Create complex legend tab
 		 */
-		legendtab = new ComplexLegendPane();
+		legendtab = new ComplexLegendPanel(desktop.getVisualizationManager());
 		sidebarTabbedPane.add("Complex Legend", legendtab);
 	}
 
@@ -264,7 +264,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 					public VisualizationMethod create() {
 						return new ColourComplexes(desktop.getSwingEngine(), desktop
 								.getGexManager(), desktop
-								.getVisualizationManager().getColorSetManager());
+								.getVisualizationManager().getColorSetManager(), desktop.getVisualizationManager());
 					}
 				});
 

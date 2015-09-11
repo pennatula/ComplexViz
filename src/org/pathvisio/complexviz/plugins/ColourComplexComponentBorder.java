@@ -26,7 +26,6 @@ import javax.swing.JPanel;
 
 import org.jdom.Element;
 import org.pathvisio.complexviz.gui.ColorChooserDialog;
-import org.pathvisio.complexviz.gui.ComplexLegendPane;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
@@ -47,12 +46,13 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 	JButton clrbtn;
 	JLabel complexlbl;
 	PvDesktop pvd;
-	private ComplexLegendPane lp;
+//	private ComplexLegendPane lp;
 	private Color random_color = Color.BLACK;
 	private Map<String, Color> complexIdBorderColorMap;
 	private Map<String, Set<PathwayElement>> complexIdComponentMap;
 	private Set<PathwayElement> result;
-	private Map<String,String> complexIdNameMap;
+	private Map<String,PathwayElement> complexIdNameMap;
+	private String COMPLEX_ID = "complex_id";
 	static final Color DEFAULT_BORDER_COLOUR = Color.BLACK;
 	static final int DEFAULT_BORDER_THICKNESS = 1;
 
@@ -61,13 +61,13 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 
 	static Color border_colour = Color.BLACK;
 
-	final static String XML_COMPLEX_BORDER = "complex_border_color_map";
+	final static String XML_COMPLEX_BORDER = "complex_border_colours";
 
 	private static final String XML_COMPLEX_ID = "complex_id";
 
 	public ColourComplexComponentBorder(PvDesktop desktop, ColorSetManager csm) {
 		pvd = desktop;
-		lp = new ComplexLegendPane();
+//		lp = new ComplexLegendPane();
 		setIsConfigurable(true);
 		setUseProvidedArea(false);
 	}
@@ -112,16 +112,16 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 		final JPanel panel = new JPanel();
 		final BoxLayout layout = new BoxLayout(panel, BoxLayout.Y_AXIS);
 		panel.setLayout(layout);		
-		JButton legendbtn = new JButton("Update Legend");
-		legendbtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae2) {
-				updateLegend();
-			}
-		});
-		panel.add(legendbtn);
+//		JButton legendbtn = new JButton("Update Legend");
+//		legendbtn.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent ae2) {
+//				updateLegend();
+//			}
+//		});
+//		panel.add(legendbtn);
 		for (final String key : complexIdNameMap.keySet()) {
-			final String complexname = complexIdNameMap.get(key);
+			final String complexname = complexIdNameMap.get(key).getTextLabel();
 			final JPanel subpanel = new JPanel();
 			final GridLayout sublayout = new GridLayout(0,2);
 			subpanel.setLayout(sublayout);
@@ -150,12 +150,12 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 		return panel;
 	}
 
-	protected void updateLegend() {
-		lp.addBorders(complexIdNameMap, complexIdBorderColorMap);
-		lp.revalidate();
-		lp.repaint();
-//			lp.updateLegend(panel);
-		}
+//	protected void updateLegend() {
+//		lp.addBorders(complexIdNameMap, complexIdBorderColorMap);
+//		lp.revalidate();
+//		lp.repaint();
+////			lp.updateLegend(panel);
+//		}
 
 	private Color generateRandomColor(){
 		int R = (int)(Math.random()*256);
@@ -185,21 +185,22 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 
 	@Override
 	public String getDescription() {
-		return "colour the borders of all components of a complex";
+		return "colour the borders of the complex and it's components";
 	}
 
 	@Override
 	public String getName() {
-		return "Colour Complex Border";
+		return "Mark Complex Components";
 	}
 
 	private void mapComplexIdName() {
-		complexIdNameMap = new HashMap<String, String>();
+		complexIdNameMap = new HashMap<String, PathwayElement>();
 		final Pathway pwy = pvd.getSwingEngine().getEngine().getActivePathway();
 		for (final PathwayElement pwe : pwy.getDataObjects()) {
 			if (pwe.getObjectType() == ObjectType.DATANODE) {
 				if (pwe.getDataNodeType().equalsIgnoreCase("complex")) {
-					complexIdNameMap.put(pwe.getElementID(), pwe.getTextLabel());
+//					complexIdNameMap.put(pwe.getElementID(), pwe.getTextLabel());
+					complexIdNameMap.put(pwe.getElementID(), pwe);
 				}
 			}
 		}
@@ -228,8 +229,9 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 				.getActivePathway();
 		for (final String cid : complexIdNameMap.keySet()) {
 			result = new HashSet<PathwayElement>();
+			result.add(complexIdNameMap.get(cid));
 			for (final PathwayElement elt : pathway.getDataObjects()) {
-				final String id = elt.getDynamicProperty("reactome_id");
+				final String id = elt.getDynamicProperty(COMPLEX_ID );
 				if (id != null && id.equalsIgnoreCase(cid)) {
 					
 					result.add(elt);
@@ -275,10 +277,6 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 			if (g.getPathwayElement().getDataNodeType()
 					.equalsIgnoreCase("complex")) {
 				final GeneProduct gp = (GeneProduct) g;
-//				final Set<String> ccs = createComplexIdSet(gp);
-//				final Map<String, Set<PathwayElement>> borMap = mapComplexComponents(ccs);
-//				final Map<String, Set<PathwayElement>> comMap = mapComplexComponents(ccs);
-//				drawSample(complexIdComponentMap, complexIdBorderColorMap, g2d);
 				drawSample(g2d);
 //				gp.markDirty();
 			}

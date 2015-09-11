@@ -34,7 +34,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.*;
 import org.bridgedb.Xref;
 import org.bridgedb.gui.SimpleFileFilter;
 import org.pathvisio.core.debug.Logger;
@@ -51,7 +50,6 @@ import org.pathvisio.desktop.visualization.Criterion;
 import org.pathvisio.desktop.visualization.Criterion.CriterionException;
 import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.dialogs.OkCancelDialog;
-import org.pathvisio.visualization.gui.ColorGradientPanel;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -64,7 +62,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  */
 public class ComplexStatisticsPanel extends JPanel implements ActionListener {
-	private Map<String, Double> complexidpercentmap;
+	private Map<String, Float> complexidpercentmap;
 	private Map<String, Set<Xref>> complexidcomponentmap;
 	private Map<String, String> idnamemap;
 	private Set<String> cidset;
@@ -85,6 +83,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 	private JButton vizbtn;
 	private JPanel clrPanel;
 	private JPanel complexPanel;
+	private String COMPLEX_ID = "complex_id";
 
 	/**
 	 * Statistics subpanel Pop up the statistics dialog
@@ -337,7 +336,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		try {
 			pathway.readFromXml(pwDir, true);
 			complexidcomponentmap = new HashMap<String, Set<Xref>>();
-			complexidpercentmap = new HashMap<String, Double>();
+			complexidpercentmap = new HashMap<String, Float>();
 			idnamemap = new HashMap<String, String>();
 			cidset = new HashSet<String>();
 			for (PathwayElement pwe : pathway.getDataObjects()) {
@@ -354,7 +353,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 				componentset = new HashSet<Xref>();
 				for (PathwayElement component : pathway.getDataObjects()) {
 					String componentid = component
-							.getDynamicProperty("reactome_id");
+							.getDynamicProperty(COMPLEX_ID );
 					if (componentid != null
 							&& componentid.equalsIgnoreCase(cid)) {
 						componentset.add(component.getXref());
@@ -383,7 +382,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 	}
 
 	private ComplexResult calculatePercent() {
-		complexidpercentmap = new HashMap<String, Double>();
+		complexidpercentmap = new HashMap<String, Float>();
 		result = new ComplexResult();
 		result.crit = critPanel.getCriterion();
 		result.gex = gm.getCachedData();
@@ -406,8 +405,8 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 
 	private ComplexStatisticsResult calculateComplexPercent(String cid) {
 		Set<Xref> componentsRefs = complexidcomponentmap.get(cid);
-		int complexComponentPositive = 0;
-		int complexComponentTotal = componentsRefs.size();
+		float complexComponentPositive = 0;
+		float complexComponentTotal = componentsRefs.size();
 
 		for (Xref ref : componentsRefs) {
 			System.out.println(ref.getId() + " : data : "
@@ -419,7 +418,8 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		System.out.println("complex : " + cid + " : positive : "
 				+ complexComponentPositive + " : total : "
 				+ complexComponentTotal);
-		double percent = (complexComponentPositive / complexComponentTotal) * 100;
+		System.out.println("ratio:"+complexComponentPositive / complexComponentTotal);
+		float percent = (complexComponentPositive / complexComponentTotal) * 100;
 		System.out.println("percent : " + percent);
 		complexidpercentmap.put(cid, percent);
 		ComplexStatisticsResult spr = new ComplexStatisticsResult(
