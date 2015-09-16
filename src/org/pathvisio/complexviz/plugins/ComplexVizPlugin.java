@@ -176,8 +176,8 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		/*
 		 * Create complex legend tab
 		 */
-		legendtab = new ComplexLegendPanel(desktop.getVisualizationManager());
-		sidebarTabbedPane.add("Complex Legend", legendtab);
+//		legendtab = new ComplexLegendPanel(desktop.getVisualizationManager());
+//		sidebarTabbedPane.add("Complex Legend", legendtab);
 	}
 
 	@Override

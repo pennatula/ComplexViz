@@ -366,7 +366,7 @@ public class ComplexLabel extends AbstractVisualizationMethod implements
 			if (DISPLAY_LABEL.equals(display)) {
 				text = g.getPathwayElement().getTextLabel();
 				text = wrap(text);
-				System.out.println("lbl : " + text);
+//				System.out.println("lbl : " + text);
 			} else if (DISPLAY_ID.equals(display)) {
 				text = g.getPathwayElement().getElementID();
 			}

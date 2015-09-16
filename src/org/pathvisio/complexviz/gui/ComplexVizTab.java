@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -17,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
@@ -72,7 +74,7 @@ public class ComplexVizTab extends JSplitPane {
 		setTopComponent(pathwayScroll);
 		setBottomComponent(dataScroll);
 		setOneTouchExpandable(true);
-		setDividerLocation(400);
+		setDividerLocation(100);
 	}
 
 	private PathwayElement clonepwe(PathwayElement pwe, int x) {
@@ -120,7 +122,11 @@ public class ComplexVizTab extends JSplitPane {
 		final GridLayout boxl = new GridLayout(results.size()+1, 1);
 		linkoutPane.removeAll();
 		linkoutPane.setLayout(boxl);
-		linkoutPane.add(new JLabel("Identifier & Data"));
+		JTextField dataLbl = new JTextField("Crossreferences & Data");
+		dataLbl.setToolTipText("Click on the buttons below!");
+		dataLbl.setEditable(false);
+		dataLbl.setHorizontalAlignment(JTextField.CENTER);
+		linkoutPane.add(dataLbl);
 		final VPathwaySwing vPathwaySwing = new VPathwaySwing(parent);
 		final VPathway vPathway = vPathwaySwing.createVPathway();
 		vPathway.setEditMode(false);
@@ -129,10 +135,11 @@ public class ComplexVizTab extends JSplitPane {
 		int x = 0;
 		for (final PathwayElement pwe : results) {
 			if(pwe.getTextLabel().length()>0){
-			System.out.println(pwe.getTextLabel());
+//			System.out.println(pwe.getTextLabel());
 			x++;
 			sourcePw.add(clonepwe(pwe, x));
 			final JButton linkout = new JButton(pwe.getTextLabel());
+//			linkout.setPreferredSize(new Dimension(40, 20));
 			linkout.addMouseListener(new InfoButtonListener(pwe.getXref(),
 					plugin));
 			linkoutPane.add(linkout);

@@ -46,6 +46,7 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 	JButton clrbtn;
 	JLabel complexlbl;
 	PvDesktop pvd;
+	private Map<String, JButton> buttonCache;
 //	private ComplexLegendPane lp;
 	private Color random_color = Color.BLACK;
 	private Map<String, Color> complexIdBorderColorMap;
@@ -112,14 +113,16 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 		final JPanel panel = new JPanel();
 		final BoxLayout layout = new BoxLayout(panel, BoxLayout.Y_AXIS);
 		panel.setLayout(layout);		
-//		JButton legendbtn = new JButton("Update Legend");
-//		legendbtn.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent ae2) {
-//				updateLegend();
-//			}
-//		});
-//		panel.add(legendbtn);
+////		JButton legendbtn = new JButton("Update Legend");
+////		legendbtn.addActionListener(new ActionListener() {
+////			@Override
+////			public void actionPerformed(ActionEvent ae2) {
+////				updateLegend();
+////			}
+////		});
+////		panel.add(legendbtn);
+		buttonCache = new HashMap<String, JButton>();
+		JButton apply = new JButton("Apply");
 		for (final String key : complexIdNameMap.keySet()) {
 			final String complexname = complexIdNameMap.get(key).getTextLabel();
 			final JPanel subpanel = new JPanel();
@@ -127,19 +130,23 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 			subpanel.setLayout(sublayout);
 			complexlbl = new JLabel(complexname);
 			clrbtn = new JButton("border");
+			clrbtn.setActionCommand(complexname);
+			buttonCache.put(complexname, clrbtn);
 			clrbtn.setForeground(complexIdBorderColorMap.get(key));
 			clrbtn.setBackground(complexIdBorderColorMap.get(key));
 			clrbtn.setName(complexname);
 			clrbtn.setOpaque(true);
 			clrbtn.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent ae2) {
+				public void actionPerformed(ActionEvent e) {
+					String command = ((JButton) e.getSource()).getActionCommand();
+					JButton button = buttonCache.get(command);
 					Color c = JColorChooser.showDialog(null, "Choose a Color",
-							clrbtn.getForeground());
-					clrbtn.setForeground(c);
-					clrbtn.setBackground(c);
-					setBorderColour(c);
+							button.getForeground());
+					button.setForeground(c);
+					button.setBackground(c);
 					complexIdBorderColorMap.put(key, c);
+					modified();
 					//					c = null;
 				}
 			});
@@ -147,9 +154,22 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 			subpanel.add(clrbtn);
 			panel.add(subpanel);
 		}
+//		apply.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent ae2) {
+//				modified();
+//			}
+//		});
+//		panel.add(new ComplexBorderPanel(this));
+//		panel.add(apply);
+//		modified();
 		return panel;
 	}
 
+protected void refresh(){
+	
+}
+	
 //	protected void updateLegend() {
 //		lp.addBorders(complexIdNameMap, complexIdBorderColorMap);
 //		lp.revalidate();
@@ -174,12 +194,13 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 		return color;
 	}
 	
-	private void setDefaultBorderColors() {
+	protected Map<String, Color> setDefaultBorderColors() {
 		complexIdBorderColorMap = new HashMap<String, Color>();
 		for(String key : complexIdNameMap.keySet()){
 			Color bc = generateRandomColor();
 			complexIdBorderColorMap.put(key, bc);
 		}
+		return complexIdBorderColorMap;
 		
 	}
 
@@ -193,7 +214,7 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 		return "Mark Complex Components";
 	}
 
-	private void mapComplexIdName() {
+	protected Map<String, PathwayElement> mapComplexIdName() {
 		complexIdNameMap = new HashMap<String, PathwayElement>();
 		final Pathway pwy = pvd.getSwingEngine().getEngine().getActivePathway();
 		for (final PathwayElement pwe : pwy.getDataObjects()) {
@@ -204,6 +225,7 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 				}
 			}
 		}
+		return complexIdNameMap;
 	}
 
 	@Override
@@ -222,7 +244,7 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 		}
 	}
 
-	private Map<String, Set<PathwayElement>> mapComplexComponents() {
+	protected Map<String, Set<PathwayElement>> mapComplexComponents() {
 		complexIdComponentMap = new HashMap<String, Set<PathwayElement>>();
 		
 		final Pathway pathway = pvd.getSwingEngine().getEngine()
@@ -242,11 +264,17 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 		return complexIdComponentMap;
 	}
 
-	private void setBorderColour(Color bordercolour) {
-		if (bordercolour != null) {
-			border_colour = bordercolour;
-			modified();
+	protected void setBorderColour(Map<String, Color> cIdBorderColorMap) {
+		for(String key : complexIdNameMap.keySet()){
+			Color bc = cIdBorderColorMap.get(key);
+			complexIdBorderColorMap.put(key, bc);
 		}
+		modified();
+//		if (bordercolour != null) {
+//			border_colour = bordercolour;
+//			modified();
+//		}
+		
 
 	}
 	
@@ -258,16 +286,16 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 	@Override
 	public Element toXML() {
 		final Element xml = super.toXML();
-		final Element elm = new Element(XML_COMPLEX_BORDER);
-		xml.addContent(elm);
-		for (final String key : complexIdBorderColorMap.keySet()) {
-			final Element selm = new Element(XML_COMPLEX_ID);
-			final Color bc = complexIdBorderColorMap.get(key);
-			final String hex = String.format("#%02x%02x%02x", bc.getRed(),
-					bc.getGreen(), bc.getBlue());
-			selm.setAttribute(key, hex);
-			xml.addContent(selm);
-		}
+//		final Element elm = new Element(XML_COMPLEX_BORDER);
+//		xml.addContent(elm);
+//		for (final String key : complexIdBorderColorMap.keySet()) {
+//			final Element selm = new Element(XML_COMPLEX_ID);
+//			final Color bc = complexIdBorderColorMap.get(key);
+//			final String hex = String.format("#%02x%02x%02x", bc.getRed(),
+//					bc.getGreen(), bc.getBlue());
+//			selm.setAttribute(key, hex);
+//			xml.addContent(selm);
+//		}
 		return xml;
 	}
 

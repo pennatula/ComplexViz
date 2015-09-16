@@ -17,6 +17,9 @@
 
 package org.pathvisio.complexviz;
 
+/**
+ * @author anwesha
+ */
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.pathvisio.complexviz.plugins.ComplexVizPlugin;

@@ -1,11 +1,13 @@
 package org.pathvisio.complexviz.gui;
 
+/**
+ * @author anwesha
+ */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
@@ -13,7 +15,6 @@ import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -21,7 +22,6 @@ import javax.swing.table.TableModel;
 import org.pathvisio.complexviz.plugins.ColorTableModel;
 
 public class ColorChooserDialog {
-//	private Object[][] colormapArray;
 
 	public JPanel colorChooserPanel() {
 		final JPanel newpanel = new JPanel();
@@ -36,16 +36,6 @@ public class ColorChooserDialog {
 		newpanel.add(scrollPane);
 		return newpanel;
 	}
-
-//	public void convertMap2Array(Map<String, Color> cm) {
-//		int i = 0;
-//		for (final String key : cm.keySet()) {
-//			colormapArray[i][0] = key;
-//			colormapArray[i][1] = cm.get(key);
-//			i++;
-//		}
-//		
-//	}
 }
 
 class ColorChooserEditor extends AbstractCellEditor implements TableCellEditor {
@@ -90,4 +80,3 @@ class ColorChooserEditor extends AbstractCellEditor implements TableCellEditor {
 		return delegate;
 	}
 }
-

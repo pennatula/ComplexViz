@@ -11,14 +11,6 @@ public class ColorTableModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-//	Object colormapArray[][] = {
-//			{ "Network forming tropocollagens", Color.RED },
-//			{ "BPAG1e:Plectin", Color.BLUE },
-//			{ "Network forming tropocollagens", Color.GREEN },
-//			{ "Network forming tropocollagens", Color.RED },
-//			{ "BPAG1e:Plectin", Color.BLUE },
-//			{ "Network forming tropocollagens", Color.GREEN } };
-
 	String columnNames[] = { "Complex Name", "Border Color" };
 
 	private Object[][] colormapArray;
@@ -55,8 +47,8 @@ public class ColorTableModel extends AbstractTableModel {
 	@Override
 	public int getRowCount() {
 		// return rowData.length;
-//		return colormapArray.length;
-		return 2;
+		return colormapArray.length;
+//		return 2;
 	}
 
 	@Override
