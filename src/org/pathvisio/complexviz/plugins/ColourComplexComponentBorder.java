@@ -154,21 +154,8 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 			subpanel.add(clrbtn);
 			panel.add(subpanel);
 		}
-//		apply.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent ae2) {
-//				modified();
-//			}
-//		});
-//		panel.add(new ComplexBorderPanel(this));
-//		panel.add(apply);
-//		modified();
 		return panel;
 	}
-
-protected void refresh(){
-	
-}
 	
 //	protected void updateLegend() {
 //		lp.addBorders(complexIdNameMap, complexIdBorderColorMap);
