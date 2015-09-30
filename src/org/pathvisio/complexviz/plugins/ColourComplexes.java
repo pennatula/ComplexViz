@@ -3,10 +3,8 @@ package org.pathvisio.complexviz.plugins;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JPanel;
@@ -21,11 +19,10 @@ import org.pathvisio.core.view.VPathway;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.visualization.AbstractVisualizationMethod;
 import org.pathvisio.desktop.visualization.ColorGradient;
-import org.pathvisio.desktop.visualization.ColorSetManager;
 import org.pathvisio.desktop.visualization.ColorGradient.ColorValuePair;
+import org.pathvisio.desktop.visualization.ColorSetManager;
 import org.pathvisio.desktop.visualization.VisualizationManager;
 import org.pathvisio.gui.SwingEngine;
-import org.pathvisio.visualization.plugins.LegendPanel;
 
 /**
  * Colours a complex node depending on percentage of components passing
@@ -35,13 +32,13 @@ import org.pathvisio.visualization.plugins.LegendPanel;
  */
 public class ColourComplexes extends AbstractVisualizationMethod {
 
-	static final Color DEFAULT_RULECOLOUR = Color.BLUE;
+	static final Color DEFAULT_RULECOLOUR = Color.ORANGE;
 	static final String DEFAULT_EXPRESSION = "[Percent] > 25";
 
 	Color c = Color.ORANGE;
 
 	private int drawModel;
-	
+
 	private final GexManager gexManager;
 	private String expression;
 	ColorGradient gradient;
@@ -57,7 +54,8 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 	private ColorGradient DEFAULT_GRADIENT;
 	private String XML_COMPLEX_COLOURS = "complex_colours";
 	private String XML_COMPLEX_ID = "complex_id";
-//	private LegendPanel lp;
+
+	// private LegendPanel lp;
 
 	GexManager getGexManager() {
 		return gexManager;
@@ -67,11 +65,11 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 			ColorSetManager csm, VisualizationManager vsm) {
 		this.se = swingEngine;
 		this.gexManager = gexManager;
-//		lp = new LegendPanel(vsm);
+		// lp = new LegendPanel(vsm);
 		drawModel = RULE_MODEL;
 		setExpression(DEFAULT_EXPRESSION);
 		setDefaultColours();
-		
+
 		setIsConfigurable(true);
 		setUseProvidedArea(false);
 	}
@@ -134,7 +132,7 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 
 	private Color getColourByGradient(Float float1, Color clr) {
 		ColorGradient gradientused = getGradient();
-		if(gradientused == null){
+		if (gradientused == null) {
 			return clr;
 		}
 		double[] vals = gradientused.getMinMax();
@@ -157,7 +155,7 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 		String expr = getExpression();
 		// System.out.println("rule color set: " + rc.getRGB());
 
-//		String expr = expression == null ? DEFAULT_EXPRESSION : expression;
+		// String expr = expression == null ? DEFAULT_EXPRESSION : expression;
 		VPathway vp = getVisualization().getManager().getEngine()
 				.getActiveVPathway();
 		if (vp != null) {
@@ -273,8 +271,8 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 			try {
 				for (final String key : cidclrmap.keySet()) {
 					xml.getAttributeValue(key);
-					cidclrmap.put(key,
-							Color.decode(xml.getAttributeValue(key)));
+					cidclrmap
+							.put(key, Color.decode(xml.getAttributeValue(key)));
 				}
 			} catch (final Exception e) {
 				Logger.log.error("Unable to parse settings for plugin", e);
@@ -304,11 +302,10 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 	}
 
 	public ColorGradient getGradient() {
-		ColorGradient cg = gradient == null ? DEFAULT_GRADIENT : gradient; 
+		ColorGradient cg = gradient == null ? DEFAULT_GRADIENT : gradient;
 		return cg;
 	}
 
-	
 	@Override
 	public int defaultDrawingOrder() {
 		return 3;
@@ -317,8 +314,8 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 	protected void setExpression(String criterion) {
 		if (criterion != null) {
 			expression = criterion;
-			modified();
 		}
+		modified();
 
 	}
 
@@ -339,11 +336,12 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 				}
 			}
 		}
-		
+
 		DEFAULT_GRADIENT = new ColorGradient();
 		DEFAULT_GRADIENT.addColorValuePair(new ColorValuePair(Color.RED, 0));
-		DEFAULT_GRADIENT.addColorValuePair(new ColorValuePair(Color.GREEN, 100));
-		
+		DEFAULT_GRADIENT
+				.addColorValuePair(new ColorValuePair(Color.GREEN, 100));
+
 		cidclrmap = new HashMap<String, Color>();
 		for (String key : cidset) {
 			cidclrmap.put(key, DEFAULT_COMPLEX_COLOUR);
@@ -363,16 +361,15 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 	protected void setRuleColour(Color rc) {
 		if (rc != null) {
 			rulecolour = rc;
-			modified();
 		}
+		modified();
 	}
 
 	protected void setNotRuleColour(Color nrc) {
 		if (nrc != null) {
 			notrulecolour = nrc;
-			modified();
 		}
-
+		modified();
 	}
 
 	protected void setDefaultExpresion() {
@@ -382,7 +379,7 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 
 	protected void setGradient(ColorGradient grad) {
 		gradient = grad;
-//		lp.setGradient(grad);
+		// lp.setGradient(grad);
 		modified();
 	}
 

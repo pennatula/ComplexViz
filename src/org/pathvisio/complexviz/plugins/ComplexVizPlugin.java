@@ -107,11 +107,18 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 				if (gp.getPathwayElement().getDataNodeType()
 						.equalsIgnoreCase("complex")) {
 					final String query = gp.getPathwayElement().getElementID();
-					doSearch(query);
+					findComponents(query);
 				} else {
-					JOptionPane.showMessageDialog(desktop.getFrame(),
-							"Please select a complex node.", "Not a complex",
-							JOptionPane.ERROR_MESSAGE);
+					if(!gp.getPathwayElement().getDynamicProperty(COMPLEX_ID).isEmpty()){
+						final String query = gp.getPathwayElement().getDynamicProperty(COMPLEX_ID);
+						System.out.println(query);
+						findParentComplex(query);
+					}else{
+						JOptionPane.showMessageDialog(desktop.getFrame(),
+								"Please select a complex or complex component node.", "Wrong selection",
+								JOptionPane.ERROR_MESSAGE);	
+					}
+					
 				}
 			}
 		}
@@ -186,7 +193,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 				.removeApplicationEventListener(this);
 	}
 
-	private void doSearch(String q) {
+	private void findComponents(String q) {
 		if (q.length() == 0)
 			return; // defensive coding, button should have been disabled anyway
 		final String query = q.toLowerCase();
@@ -197,11 +204,11 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 			return; // defensive coding, button and text field should have been
 					// disabled anyway
 		for (final PathwayElement elt : pathway.getDataObjects()) {
-			final String parent_complex_id = elt.getTextLabel();
-			if (parent_complex_id != null
-					&& parent_complex_id.toLowerCase().contains(query)) {
-				result.add(elt);
-			}
+//			final String parent_complex_id = elt.getTextLabel();
+//			if (parent_complex_id != null
+//					&& parent_complex_id.toLowerCase().contains(query)) {
+//				result.add(elt);
+//			}
 
 			final String id = elt.getDynamicProperty(COMPLEX_ID );
 			if (id != null && id.toLowerCase().contains(query)) {
@@ -228,6 +235,43 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		}
 	}
 
+	private void findParentComplex(String q) {
+		if (q.length() == 0)
+			return; // defensive coding, button should have been disabled anyway
+		final String query = q.toLowerCase();
+		final Set<PathwayElement> result = new HashSet<PathwayElement>();
+		final Pathway pathway = desktop.getSwingEngine().getEngine()
+				.getActivePathway();
+		if (pathway == null)
+			return; // defensive coding, button and text field should have been
+					// disabled anyway
+		for (final PathwayElement elt : pathway.getDataObjects()) {
+			final String id = elt.getXref().getId();
+			if (id != null && id.toLowerCase().contains(query)) {
+				result.add(elt);
+			}
+		}
+		Rectangle2D interestingRect = null;
+		final VPathway vpwy = desktop.getSwingEngine().getEngine()
+				.getActiveVPathway();
+		vpwy.resetHighlight();
+		for (final PathwayElement elt : result) {
+			final VPathwayElement velt = vpwy.getPathwayElementView(elt);
+			final Color hc = new Color(128, 0, 128);
+			velt.highlight(hc);
+			if (interestingRect == null) {
+				interestingRect = velt.getVBounds();
+			} else {
+				interestingRect.add(velt.getVBounds());
+			}
+		}
+
+		if (interestingRect != null) {
+			vpwy.getWrapper().scrollTo(interestingRect.getBounds());
+		}
+	}
+
+	
 	private Set<PathwayElement> getComplexComponents(String comid) {
 		final Set<PathwayElement> result = new HashSet<PathwayElement>();
 		final Pathway pathway = desktop.getSwingEngine().getEngine()
@@ -299,6 +343,10 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 				menu.add(vizpro_action);
 			}
 		};
+		if (update()){
+			desktop.addPathwayElementMenuHook(vizproHook);
+			desktop.getSwingEngine().getEngine().addApplicationEventListener(this);
+		}
 		desktop.addPathwayElementMenuHook(vizproHook);
 		desktop.getSwingEngine().getEngine().addApplicationEventListener(this);
 		createSidePanel();
@@ -367,9 +415,14 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		}
 	}
 
-	public void update() {
-		final boolean hasPathway = desktop.getSwingEngine().getEngine()
-				.getActivePathway() != null;
+	public boolean update() {
+		boolean hasPathway = false;
+		if(desktop.getSwingEngine().getEngine()
+				.getActivePathway() != null){
+			hasPathway = true;	
+		}
+		System.out.println(hasPathway);
+		return hasPathway;
 	}
 
 	public void updateData(final Xref xref) {

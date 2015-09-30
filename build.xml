@@ -2,8 +2,8 @@
 <project name="ComplexViz" default="jar" basedir=".">
 
 	<property name="version.number" value="1.0.0" />
-	<property name="pathvisio.dir" value="/home/anwesha/workspace/pvplugins/common-bundles/trunk" />
-	<property name="common.bundles" value="/home/anwesha/workspace/pvplugins/common-bundles/trunk" />
+	<property name="pathvisio.dir" value="/home/anwesha/workspace/pathvisio/" />
+	<property name="common.bundles" value="/home/anwesha/workspace/pvplugins/common-bundles/trunk/" />
 	
 	<import file="${common.bundles}/plugin-common.xml"/>
 		<!-- embedded jars are embedded in the resulting bundle -->
