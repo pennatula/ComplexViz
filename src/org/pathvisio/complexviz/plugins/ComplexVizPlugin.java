@@ -90,7 +90,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		private static final long serialVersionUID = 1L;
 
 		VizProAction(boolean b) {
-			putValue(NAME, "Highlight Complex Components");
+			putValue(NAME, "Highlight Complex / Components");
 		}
 
 		/**
@@ -111,7 +111,6 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 				} else {
 					if(!gp.getPathwayElement().getDynamicProperty(COMPLEX_ID).isEmpty()){
 						final String query = gp.getPathwayElement().getDynamicProperty(COMPLEX_ID);
-						System.out.println(query);
 						findParentComplex(query);
 					}else{
 						JOptionPane.showMessageDialog(desktop.getFrame(),
