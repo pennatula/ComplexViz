@@ -110,8 +110,8 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 							"Could not open criterion panel because of a database access error");
 		}
 		JTextArea info = new JTextArea("A Percentage Score will be calculated for each complex on the pathway. \n" +
-		"X = Complex components qualifying the criterion \n"+
-				"Y = Total number of components of the complex\n"+
+				"X = number of unique components qualifying the criterion\n" +
+				"Y = Total number of unique complex components\n" +
 		"Percentage Score = X/Y * 100");
 		info.setFont(new Font("Serif", Font.BOLD, 11));
 		info.setForeground(Color.decode("#00529B"));
@@ -221,7 +221,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 			layout.setColumnGroups(new int[][] { { 2, 4 } });
 			setLayout(layout);
 			CellConstraints cc = new CellConstraints();
-			add(new JLabel("Criterion: "), cc.xy(2, 2));
+			add(new JLabel("Criterion: e.g. [P.Value] <= 0.05 "), cc.xy(2, 2));
 			txtExpr = new JTextField(40);
 			txtExpr.getDocument().addDocumentListener(new DocumentListener() {
 				public void changedUpdate(DocumentEvent e) {
@@ -329,7 +329,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		 */
 		ComplexStatisticsTableModel temp = new ComplexStatisticsTableModel();
 		temp.setColumns(new Column[] { Column.COMPLEX_NAME, Column.COMPLEX_ID,
-				Column.R, Column.TOTAL, Column.PERCENT });
+				Column.X, Column.Y, Column.PERCENT });
 		tblResult.setModel(temp);
 		Pathway pathway = new Pathway();
 
@@ -385,11 +385,17 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		complexidpercentmap = new HashMap<String, Float>();
 		result = new ComplexResult();
 		result.crit = critPanel.getCriterion();
+		result.pwFile = se.getEngine().getActivePathway().getSourceFile().getAbsoluteFile();
+		result.gdb = se.getGdbManager().getCurrentGdb();
 		result.gex = gm.getCachedData();
 		result.stm = new ComplexStatisticsTableModel();
 		result.stm.setColumns(new Column[] { Column.COMPLEX_NAME,
-				Column.COMPLEX_ID, Column.R, Column.TOTAL, Column.PERCENT });
-		result.methodDesc = "Percentage calculated";
+				Column.COMPLEX_ID, Column.X, Column.Y, Column.PERCENT });
+		result.methodDesc = "**************************************************************\n" +
+				"Percentage scores calculated for the complexes on the pathway based on the criterion\n" +
+				"X = number of unique components qualifying the criterion\n" +
+				"Y = Total number of unique complex components\n" +
+				"Percentage Score = X/Y * 100";
 
 		for (String cid : cidset) {
 			ComplexStatisticsResult spr = calculateComplexPercent(cid);
@@ -406,7 +412,10 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 	private ComplexStatisticsResult calculateComplexPercent(String cid) {
 		Set<Xref> componentsRefs = complexidcomponentmap.get(cid);
 		float complexComponentPositive = 0;
-		float complexComponentTotal = componentsRefs.size();
+		/*
+		 * size is -1 as the complex is also member of this list
+		 */
+		float complexComponentTotal = componentsRefs.size()-1;
 
 		for (Xref ref : componentsRefs) {
 			System.out.println(ref.getId() + " : data : "

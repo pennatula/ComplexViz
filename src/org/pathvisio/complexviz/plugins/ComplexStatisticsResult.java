@@ -43,8 +43,8 @@ public class ComplexStatisticsResult implements RowWithProperties<Column>
 	{
 		switch (prop)
 		{
-		case R: return "" + r;
-		case TOTAL: return "" + total;
+		case X: return "" + r;
+		case Y: return "" + total;
 		case COMPLEX_NAME: return name;
 		case COMPLEX_ID: return id;
 		case PERCENT: return String.format ("%3.2f", (float)p);

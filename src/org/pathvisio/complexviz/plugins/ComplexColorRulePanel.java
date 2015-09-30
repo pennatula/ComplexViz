@@ -56,30 +56,25 @@ public class ComplexColorRulePanel extends JPanel{
 	 */
 	private void setExpresion()
 	{
-//		try {
-			String error = null;
-			String expr = txtExpr.getText();
-	/*
-	 * Test for errors
-	 */
-			if(!expr.matches("[,/!%<>]")){
-				error = "no operand";
-			}
+		String error = null;
+		String expr = txtExpr.getText();
+/*
+ * Test for errors
+ */
+		if(!expr.matches("[,/!%<>]")){
+			error = "no operand";
+		}
 //			String error = cr.setExpression(expr, sampleNames);
-			if (error == null)
-			{
-				errorMsg.setText("Rule logic OK");
-				errorMsg.setForeground(Color.GREEN);
-			}
-			else
-			{
-				errorMsg.setText(error);
-				errorMsg.setForeground(Color.RED);
-			}
-//		} 
-//		catch (DataException e) {
-//			Logger.log.error ("Error while setting expression", e);
-//		}
+		if (error == null)
+		{
+			errorMsg.setText("Rule logic OK");
+			errorMsg.setForeground(Color.GREEN);
+		}
+		else
+		{
+			errorMsg.setText(error);
+			errorMsg.setForeground(Color.RED);
+		}
 	}
 
 	/**

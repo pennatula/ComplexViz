@@ -41,7 +41,7 @@ class ComplexStatisticsTableModel extends ListWithPropertiesTableModel<Column, C
 
 	public ComplexStatisticsTableModel() {
 			saveColumns = new Column[] {
-					Column.COMPLEX_NAME, Column.COMPLEX_ID, Column.R, Column.TOTAL, Column.PERCENT};
+					Column.COMPLEX_NAME, Column.COMPLEX_ID, Column.X, Column.Y, Column.PERCENT};
 	}
 
 	public void printData(PrintStream out) throws IOException

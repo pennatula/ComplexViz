@@ -23,8 +23,8 @@ import org.pathvisio.desktop.util.PropertyColumn;
  */
 public enum Column implements PropertyColumn
 {
-	R("positive (r)"),
-	TOTAL("total"),
+	X("X"),
+	Y("Y"),
 	COMPLEX_ID("Identifier"),
 	COMPLEX_NAME("Complex"),
 	PERCENT ("Percent");

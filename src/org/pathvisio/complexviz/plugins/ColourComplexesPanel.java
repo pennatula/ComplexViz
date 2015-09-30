@@ -91,9 +91,9 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 			layout.setColumnGroups(new int[][] { { 2, 4 } });
 			setLayout(layout);
 			final CellConstraints cc = new CellConstraints();
-			add(new JLabel("Expression: "), cc.xy(2, 2));
+			add(new JLabel("Enter an expression (e.g. [Percent] > 25 )"), cc.xy(2, 2));
 			txtExpr = new JTextField(40);
-			txtExpr.setText("[Percent] > 25");
+//			txtExpr.setText("[Percent] > 25");
 			txtExpr.getDocument().addDocumentListener(new DocumentListener() {
 				@Override
 				public void changedUpdate(final DocumentEvent e) {
