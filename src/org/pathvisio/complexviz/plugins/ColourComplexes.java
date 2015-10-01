@@ -52,7 +52,10 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 	private Color notrulecolour = Color.DARK_GRAY;
 	private Color rulecolour = Color.BLUE;
 	private ColorGradient DEFAULT_GRADIENT;
-	private String XML_COMPLEX_COLOURS = "complex_colours";
+	private String XML_COMPLEXVIZ = "complexviz settings";
+	private String XML_COMPLEX_EXPRESSION = "complex_colours_expression";
+	private String XML_COMPLEX_COLOUR_STYLE = "colour style";
+	private String XML_COMPLEX_COLOURS = "complex colours";
 	private String XML_COMPLEX_ID = "complex_id";
 
 	// private LegendPanel lp;
@@ -152,10 +155,10 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 	private Color getColourByRule(Float float1, Color clr) {
 		Color rc = getRuleColor();
 		Color nrc = getNotRuleColor();
-		String expr = getExpression();
+//		String expr = getExpression();
 		// System.out.println("rule color set: " + rc.getRGB());
 
-		// String expr = expression == null ? DEFAULT_EXPRESSION : expression;
+		String expr = expression == null ? DEFAULT_EXPRESSION : expression;
 		VPathway vp = getVisualization().getManager().getEngine()
 				.getActiveVPathway();
 		if (vp != null) {
@@ -173,49 +176,52 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 	private boolean evaluate(String expression2, Float float1) {
 		Boolean booleanval = false;
 		String[] exprParts;
-
-		if (expression2.contains("<")) {
-			if (expression2.contains("=")) {
-				exprParts = expression2.split("<=");
-				if (float1 <= Double.parseDouble(exprParts[1])) {
-					booleanval = true;
-				}
-			} else {
-				if (expression2.contains(">")) {
-					exprParts = expression2.split("[!=]");
-					if (!(float1 == Double.parseDouble(exprParts[1]))) {
-						booleanval = true;
-					}
-				}
-				exprParts = expression2.split("<");
-				if (float1 < Double.parseDouble(exprParts[1])) {
-					booleanval = true;
-				}
-			}
-		}
-
-		if (expression2.contains(">")) {
-			if (expression2.contains("=")) {
-				exprParts = expression2.split(">=");
-				if (float1 > Double.parseDouble(exprParts[1])) {
-					booleanval = true;
-				}
-			} else {
-				exprParts = expression2.split(">");
-				if (float1 > Double.parseDouble(exprParts[1])) {
-					booleanval = true;
-				}
-			}
-
-		}
-
+		//TODO check for any number instead of 25
+if(expression2.contains("25")){
+	if (expression2.contains("<")) {
 		if (expression2.contains("=")) {
-			exprParts = expression2.split("=");
-			if (float1 == Double.parseDouble(exprParts[1])) {
+			exprParts = expression2.split("<=");
+			if (float1 <= Double.parseDouble(exprParts[1])) {
+				booleanval = true;
+			}
+		} else {
+			if (expression2.contains(">")) {
+				exprParts = expression2.split("[!=]");
+				if (!(float1 == Double.parseDouble(exprParts[1]))) {
+					booleanval = true;
+				}
+			}
+			exprParts = expression2.split("<");
+			if (float1 < Double.parseDouble(exprParts[1])) {
 				booleanval = true;
 			}
 		}
-		return booleanval;
+	}
+
+	if (expression2.contains(">")) {
+		if (expression2.contains("=")) {
+			exprParts = expression2.split(">=");
+			if (float1 > Double.parseDouble(exprParts[1])) {
+				booleanval = true;
+			}
+		} else {
+			exprParts = expression2.split(">");
+			if (float1 > Double.parseDouble(exprParts[1])) {
+				booleanval = true;
+			}
+		}
+
+	}
+
+	if (expression2.contains("=")) {
+		exprParts = expression2.split("=");
+		if (float1 == Double.parseDouble(exprParts[1])) {
+			booleanval = true;
+		}
+	}
+
+}
+			return booleanval;
 	}
 
 	protected void setModel(int model) {
@@ -229,16 +235,36 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 	@Override
 	public final Element toXML() {
 		final Element xml = super.toXML();
-		final Element elm = new Element(XML_COMPLEX_COLOURS);
+		final Element elm = new Element(XML_COMPLEXVIZ);
 		xml.addContent(elm);
-		for (final String key : cidclrmap.keySet()) {
-			final Element selm = new Element(XML_COMPLEX_ID);
-			final Color bc = cidclrmap.get(key);
-			final String hex = String.format("#%02x%02x%02x", bc.getRed(),
-					bc.getGreen(), bc.getBlue());
-			selm.setAttribute(key, hex);
-			xml.addContent(selm);
-		}
+//		for (final String key : cidclrmap.keySet()) {
+//			final Element selm = new Element(XML_COMPLEX_ID);
+//			final Color bc = cidclrmap.get(key);
+//			final String hex = String.format("#%02x%02x%02x", bc.getRed(),
+//					bc.getGreen(), bc.getBlue());
+//			selm.setAttribute(key, hex);
+//			xml.addContent(selm);
+//		}
+//		final Element elm = new Element(XML_COMPLEXVIZ);
+//		xml.addContent(elm);
+		
+//		final Color bc = cidclrmap.get(key);
+//		final String hex = String.format("#%02x%02x%02x", bc.getRed(),
+//					bc.getGreen(), bc.getBlue());
+//		final Element selm = new Element(XML_COMPLEXVIZ);
+//		selm.setAttribute("expression",expression);
+		final Element telm = new Element(XML_COMPLEX_EXPRESSION);
+		telm.setAttribute("expression",expression);
+		final Element foelm = new Element(XML_COMPLEX_COLOUR_STYLE);
+		foelm.setAttribute("style",String.valueOf(RULE_MODEL));
+		final Element fielm = new Element(XML_COMPLEX_COLOURS);
+		fielm.setAttribute("colours","red,blue");
+		
+//		xml.addContent(selm);
+		xml.addContent(telm);
+		xml.addContent(foelm);
+		xml.addContent(fielm);
+//		
 		return xml;
 	}
 
@@ -259,15 +285,15 @@ public class ColourComplexes extends AbstractVisualizationMethod {
 		return builder.toString().toUpperCase();
 	}
 
-	public String getExpression() {
-		String expr = expression == null ? DEFAULT_EXPRESSION : expression;
-		return expr;
-	}
+//	public String getExpression() {
+//		String expr = expression == null ? DEFAULT_EXPRESSION : expression;
+//		return expr;
+//	}
 
 	@Override
 	public final void loadXML(Element xml) {
 		super.loadXML(xml);
-		for (int i = 0; i < xml.getChildren(XML_COMPLEX_COLOURS).size(); i++) {
+		for (int i = 0; i < xml.getChildren(XML_COMPLEXVIZ).size(); i++) {
 			try {
 				for (final String key : cidclrmap.keySet()) {
 					xml.getAttributeValue(key);

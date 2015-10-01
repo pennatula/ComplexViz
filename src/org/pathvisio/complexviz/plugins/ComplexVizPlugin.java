@@ -18,7 +18,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.bridgedb.Xref;
-import org.pathvisio.complexviz.gui.ComplexLegendPanel;
 import org.pathvisio.complexviz.gui.ComplexVizDialog;
 import org.pathvisio.complexviz.gui.ComplexVizTab;
 import org.pathvisio.core.ApplicationEvent;
@@ -61,6 +60,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		private static final long serialVersionUID = 1L;
 		MainPanel mainPanel;
 		private final PvDesktop ste;
+		private VPathwayElement affectedObject;
 
 		public VisualizationAction(PvDesktop ste) {
 			this.ste = ste;
@@ -131,8 +131,11 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 	private Set<PathwayElement> compwe = new HashSet<PathwayElement>();
 
 	private String selectedElementId;
-	private ComplexLegendPanel legendtab;
+//	private ComplexLegendPanel legendtab;
 	private String COMPLEX_ID = "complex_id";
+	
+	//TODO save the visualization
+	// save criteria [P.Value] < 0.05
 
 	// private final VizProAction vizproAction = new VizProAction(true);
 
@@ -141,22 +144,22 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		switch (e.getType()) {
 		case VPATHWAY_OPENED: {
 			((VPathway) e.getSource()).addSelectionListener(this);
-			for (final PathwayElement o : ((Pathway) e.getSource())
-					.getDataObjects()) {
-				if (o.getDataNodeType().equalsIgnoreCase("complex")) {
-					compwe = getComplexComponents(o.getElementID());
-				}
-			}
+//			for (final PathwayElement o : ((Pathway) e.getSource())
+//					.getDataObjects()) {
+//				if (o.getDataNodeType().equalsIgnoreCase("complex")) {
+//					compwe = getComplexComponents(o.getElementID());
+//				}
+//			}
 		}
 			break;
 		case VPATHWAY_CREATED: {
 			((VPathway) e.getSource()).addSelectionListener(this);
-			for (final PathwayElement o : ((Pathway) e.getSource())
-					.getDataObjects()) {
-				if (o.getDataNodeType().equalsIgnoreCase("complex")) {
-					compwe = getComplexComponents(o.getElementID());
-				}
-			}
+//			for (final PathwayElement o : ((Pathway) e.getSource())
+//					.getDataObjects()) {
+//				if (o.getDataNodeType().equalsIgnoreCase("complex")) {
+//					compwe = getComplexComponents(o.getElementID());
+//				}
+//			}
 		}
 			break;
 			
@@ -342,13 +345,14 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 				menu.add(vizpro_action);
 			}
 		};
-		if (update()){
-			desktop.addPathwayElementMenuHook(vizproHook);
-			desktop.getSwingEngine().getEngine().addApplicationEventListener(this);
-		}
+//		if (update()){
+//			desktop.addPathwayElementMenuHook(vizproHook);
+//			desktop.getSwingEngine().getEngine().addApplicationEventListener(this);
+//			}
+		createSidePanel();
 		desktop.addPathwayElementMenuHook(vizproHook);
 		desktop.getSwingEngine().getEngine().addApplicationEventListener(this);
-		createSidePanel();
+		
 	}
 
 	@Override
@@ -366,7 +370,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 
 		switch (e.type) {
 		case SelectionEvent.OBJECT_ADDED:
-			if (e.selection.size() == 1) {
+			if (e.selection.size() > 0) {
 				final Iterator<VPathwayElement> it = e.selection.iterator();
 				final VPathwayElement o = it.next();
 
@@ -420,7 +424,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 				.getActivePathway() != null){
 			hasPathway = true;	
 		}
-		System.out.println(hasPathway);
+//		System.out.println(hasPathway);
 		return hasPathway;
 	}
 
