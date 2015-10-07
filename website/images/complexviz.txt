@@ -1,0 +1,16 @@
+Statistics results for Wed Oct 07 14:44:07 CEST 2015
+Dataset: /home/anwesha/Desktop/scienceCafe/GEO2R_processing_ request.pgex
+Pathway file: /home/anwesha/ReactomeDatabase/HumanReactome53/Abacavir transport and metabolism.gpml
+Gene database: /home/anwesha/PathVisio-Data/Hs_Ensembl_r80.bridge, /home/anwesha/PathVisio-Data/metabolites_20150409.bridge
+Criterion:  [P.Value] <= 0.05 
+**************************************************************
+Percentage scores calculated for the complexes on the pathway based on the criterion
+X = number of unique components qualifying the criterion
+Y = Total number of unique complex components
+Percentage Score = X/Y * 100
+
+Complex	Identifier	X	Y	Percent
+ADH1A:2Zn2+ dimer	R-HSA-71693	1.0	2.0	50.00
+NT5C2 tetramer	R-HSA-109318	1.0	2.0	50.00
+ADAL:Zn	R-HSA-2161178	0.0	2.0	0.00
+ABCG2 dimer	R-HSA-917863	0.0	1.0	0.00
