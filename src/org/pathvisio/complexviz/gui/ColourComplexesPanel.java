@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.complexviz.plugins;
+package org.pathvisio.complexviz.gui;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -50,7 +50,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.jdom.Element;
-import org.pathvisio.complexviz.gui.ComplexLegendPanel;
+import org.pathvisio.complexviz.plugins.VisualisePercentScores;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.desktop.util.TextFieldUtils;
 import org.pathvisio.desktop.visualization.ColorGradient;
@@ -64,13 +64,13 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * Configuration panel for the ColourComplexes visualization method
+ * Configuration panel for the VisualisePercentScores visualization method
  * 
  * @author anwesha
  */
 public class ColourComplexesPanel extends JPanel implements ActionListener {
 	
-	private ComplexLegendPanel lp;
+//	private ComplexLegendPanel lp;
 
 	private class CriterionPanel extends JPanel {
 		/**
@@ -112,7 +112,7 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 			});
 
 			add(txtExpr, cc.xyw(2, 4, 3));
-			final String[] OPERANDS = { "=", "<", ">", "<=", ">=", "<>" };
+			final String[] OPERANDS = { "<", ">", "<=", ">=","==", "!=" };
 			final JList lstOperators = new JList(OPERANDS);
 			add(new JScrollPane(lstOperators), cc.xy(2, 6));
 
@@ -315,8 +315,7 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 
 			/**
 			 * Action Listeners for buttons, combo boxes and text boxes to set
-			 * colours, linethicknesses and values to be used for the
-			 * visualization
+			 * colours for the visualization
 			 */
 			rulecolourButton.addActionListener(new ActionListener() {
 				@Override
@@ -395,7 +394,7 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 	static final Cursor COLOR_PICK_CURS = Toolkit.getDefaultToolkit()
 			.createCustomCursor(COLOR_PICK_ICON.getImage(), new Point(4, 19),
 					"Color picker");
-	private final ColourComplexes method;
+	private final VisualisePercentScores method;
 	private final Rule rule;
 	private final Gradient gradient;
 	private final CardLayout cardLayout;
@@ -414,7 +413,7 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 	private boolean useRule = false;
 	
 
-	public ColourComplexesPanel(final ColourComplexes method, ColorSetManager csm) {
+	public ColourComplexesPanel(final VisualisePercentScores method, ColorSetManager csm) {
 		this.method = method;
 		this.csm = csm;
 //		lp = new ComplexLegendPanel();

@@ -1,4 +1,4 @@
-package org.pathvisio.complexviz.plugins;
+package org.pathvisio.complexviz;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -20,6 +20,9 @@ import javax.swing.event.DocumentListener;
 import org.bridgedb.Xref;
 import org.pathvisio.complexviz.gui.ComplexVizDialog;
 import org.pathvisio.complexviz.gui.ComplexVizTab;
+import org.pathvisio.complexviz.plugins.ColourComplexBorder;
+import org.pathvisio.complexviz.plugins.VisualisePercentScores;
+import org.pathvisio.complexviz.plugins.ComplexLabel;
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.core.model.Pathway;
@@ -304,22 +307,22 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		final VisualizationMethodRegistry reg = aDesktop
 				.getVisualizationManager().getVisualizationMethodRegistry();
 
-		reg.registerComplexMethod(ColourComplexes.class.toString(),
+		reg.registerComplexMethod(VisualisePercentScores.class.toString(),
 				new VisualizationMethodProvider() {
 					@Override
 					public VisualizationMethod create() {
-						return new ColourComplexes(desktop.getSwingEngine(), desktop
+						return new VisualisePercentScores(desktop.getSwingEngine(), desktop
 								.getGexManager(), desktop
 								.getVisualizationManager().getColorSetManager(), desktop.getVisualizationManager());
 					}
 				});
 
 		reg.registerComplexMethod(
-				ColourComplexComponentBorder.class.toString(),
+				ColourComplexBorder.class.toString(),
 				new VisualizationMethodProvider() {
 					@Override
 					public VisualizationMethod create() {
-						return new ColourComplexComponentBorder(desktop,
+						return new ColourComplexBorder(desktop,
 								desktop.getVisualizationManager()
 										.getColorSetManager());
 					}

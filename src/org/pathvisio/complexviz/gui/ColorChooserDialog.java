@@ -19,7 +19,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
-import org.pathvisio.complexviz.plugins.ColorTableModel;
+import org.pathvisio.complexviz.plugins.BorderColorTableModel;
 
 public class ColorChooserDialog {
 
@@ -27,7 +27,7 @@ public class ColorChooserDialog {
 		final JPanel newpanel = new JPanel();
 		final BorderLayout layout = new BorderLayout();
 		newpanel.setLayout(layout);
-		final TableModel model = new ColorTableModel();
+		final TableModel model = new BorderColorTableModel();
 		final JTable table = new JTable(model);
 		final TableColumn column = table.getColumnModel().getColumn(1);
 		final TableCellEditor editor = new ColorChooserEditor();

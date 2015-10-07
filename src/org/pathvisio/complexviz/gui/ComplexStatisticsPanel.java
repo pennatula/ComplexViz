@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.pathvisio.complexviz.plugins;
+package org.pathvisio.complexviz.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,6 +36,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.bridgedb.Xref;
 import org.bridgedb.gui.SimpleFileFilter;
+import org.pathvisio.complexviz.plugins.VisualisePercentScores;
+import org.pathvisio.complexviz.plugins.Column;
+import org.pathvisio.complexviz.plugins.ComplexResult;
+import org.pathvisio.complexviz.plugins.ComplexStatisticsResult;
+import org.pathvisio.complexviz.plugins.ComplexStatisticsTableModel;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.ObjectType;
@@ -78,7 +83,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 	private ButtonGroup colorstyle;
 	private JRadioButton gradientbutton;
 	private JRadioButton rulebutton;
-	private final ColourComplexes method;
+	private final VisualisePercentScores method;
 	private ColorSetManager csm;
 	private JButton vizbtn;
 	private JPanel clrPanel;
@@ -92,7 +97,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 	 * @param gexManager
 	 * @param swingEngine
 	 */
-	ComplexStatisticsPanel(ColourComplexes complexcolor,
+	public ComplexStatisticsPanel(VisualisePercentScores complexcolor,
 			SwingEngine swingEngine, GexManager gexManager) {
 		this.method = complexcolor;
 		this.se = swingEngine;
@@ -418,18 +423,18 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		float complexComponentTotal = componentsRefs.size()-1;
 
 		for (Xref ref : componentsRefs) {
-			System.out.println(ref.getId() + " : data : "
-					+ gm.getCachedData().getData(ref));
+//			System.out.println(ref.getId() + " : data : "
+//					+ gm.getCachedData().getData(ref));
 			if (evaluateRef(ref)) {
 				complexComponentPositive++;
 			}
 		}
-		System.out.println("complex : " + cid + " : positive : "
-				+ complexComponentPositive + " : total : "
-				+ complexComponentTotal);
-		System.out.println("ratio:"+complexComponentPositive / complexComponentTotal);
+//		System.out.println("complex : " + cid + " : positive : "
+//				+ complexComponentPositive + " : total : "
+//				+ complexComponentTotal);
+//		System.out.println("ratio:"+complexComponentPositive / complexComponentTotal);
 		float percent = (complexComponentPositive / complexComponentTotal) * 100;
-		System.out.println("percent : " + percent);
+//		System.out.println("percent : " + percent);
 		complexidpercentmap.put(cid, percent);
 		ComplexStatisticsResult spr = new ComplexStatisticsResult(
 				idnamemap.get(cid), cid, complexComponentPositive,

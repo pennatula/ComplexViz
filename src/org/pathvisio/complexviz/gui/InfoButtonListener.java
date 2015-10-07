@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import org.bridgedb.Xref;
-import org.pathvisio.complexviz.plugins.ComplexVizPlugin;
+import org.pathvisio.complexviz.ComplexVizPlugin;
 
 /**
  * Called when the (i) button next to a complex component is clicked.

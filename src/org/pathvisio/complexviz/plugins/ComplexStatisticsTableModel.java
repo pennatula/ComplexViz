@@ -32,7 +32,7 @@ import org.pathvisio.desktop.util.ListWithPropertiesTableModel;
  * 
  * Table Model for showing statistics results
  */
-class ComplexStatisticsTableModel extends ListWithPropertiesTableModel<Column, ComplexStatisticsResult>
+public class ComplexStatisticsTableModel extends ListWithPropertiesTableModel<Column, ComplexStatisticsResult>
 {
 	private static final long serialVersionUID = 1L;
 

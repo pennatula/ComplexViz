@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
-public class ColorTableModel extends AbstractTableModel {
+public class BorderColorTableModel extends AbstractTableModel {
 	/**
 	 * 
 	 */
@@ -21,8 +21,8 @@ public class ColorTableModel extends AbstractTableModel {
 		 colormapArray = new Object[cm.keySet().size()][2];
 		int i = 0;
 		for (final String key : cm.keySet()) {
-			System.out.println("key "+key);
-			System.out.println("color"+cm.get(key));
+//			System.out.println("key "+key);
+//			System.out.println("color"+cm.get(key));
 			colormapArray[i][0] = key;
 			colormapArray[i][1] = cm.get(key);
 			i++;

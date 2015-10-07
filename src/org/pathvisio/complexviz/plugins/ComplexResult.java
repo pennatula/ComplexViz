@@ -34,14 +34,14 @@ import org.pathvisio.desktop.visualization.Criterion;
  */
 public class ComplexResult
 {
-	ComplexStatisticsTableModel stm;
+	public ComplexStatisticsTableModel stm;
 	int bigN = 0;
 	int bigR = 0;
-	Criterion crit;
-	File pwFile;
-	CachedData gex;
-	IDMapper gdb;
-	String methodDesc;
+	public Criterion crit;
+	public File pwFile;
+	public CachedData gex;
+	public IDMapper gdb;
+	public String methodDesc;
 
 	public void save (File f) throws IOException
 	{

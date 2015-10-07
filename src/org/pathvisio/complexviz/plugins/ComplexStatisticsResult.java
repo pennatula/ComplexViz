@@ -30,7 +30,7 @@ public class ComplexStatisticsResult implements RowWithProperties<Column>
 	private String id;
 	private float p = 0;
 	
-	ComplexStatisticsResult (String name, String id, float complexComponentPositive, float complexComponentTotal, float p)
+	public ComplexStatisticsResult (String name, String id, float complexComponentPositive, float complexComponentTotal, float p)
 	{
 		this.r = complexComponentPositive;
 		this.total = complexComponentTotal;

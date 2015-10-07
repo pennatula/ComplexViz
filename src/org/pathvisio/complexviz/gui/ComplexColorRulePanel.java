@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.pathvisio.complexviz.plugins;
+package org.pathvisio.complexviz.gui;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;

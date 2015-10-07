@@ -42,7 +42,7 @@ import org.pathvisio.desktop.visualization.ColorSetManager;
  * @author anwesha
  * 
  */
-public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
+public class ColourComplexBorder extends AbstractVisualizationMethod {
 	JButton clrbtn;
 	JLabel complexlbl;
 	PvDesktop pvd;
@@ -66,7 +66,7 @@ public class ColourComplexComponentBorder extends AbstractVisualizationMethod {
 
 	private static final String XML_COMPLEX_ID = "complex_id";
 
-	public ColourComplexComponentBorder(PvDesktop desktop, ColorSetManager csm) {
+	public ColourComplexBorder(PvDesktop desktop, ColorSetManager csm) {
 		pvd = desktop;
 //		lp = new ComplexLegendPane();
 		setIsConfigurable(true);

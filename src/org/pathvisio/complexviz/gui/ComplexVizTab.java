@@ -25,7 +25,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import org.bridgedb.Xref;
-import org.pathvisio.complexviz.plugins.ComplexVizPlugin;
+import org.pathvisio.complexviz.ComplexVizPlugin;
 import org.pathvisio.core.model.LineStyle;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;

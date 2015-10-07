@@ -22,7 +22,6 @@ package org.pathvisio.complexviz;
  */
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.pathvisio.complexviz.plugins.ComplexVizPlugin;
 import org.pathvisio.desktop.plugin.Plugin;
 
 public class Activator implements BundleActivator {
