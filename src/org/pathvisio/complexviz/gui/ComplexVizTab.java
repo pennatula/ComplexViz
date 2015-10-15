@@ -26,6 +26,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.bridgedb.Xref;
 import org.pathvisio.complexviz.ComplexVizPlugin;
+import org.pathvisio.core.model.DataNodeType;
 import org.pathvisio.core.model.LineStyle;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
@@ -37,6 +38,8 @@ import org.pathvisio.desktop.gex.BackpageExpression;
 import org.pathvisio.gui.BackpagePane;
 import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.gui.SwingEngine;
+import org.pathvisio.gui.BackpageTextProvider.BackpageAttributes;
+import org.pathvisio.gui.BackpageTextProvider.BackpageXrefs;
 import org.pathvisio.gui.view.VPathwaySwing;
 
 /**
@@ -140,7 +143,7 @@ public class ComplexVizTab extends JSplitPane {
 			sourcePw.add(clonepwe(pwe, x));
 			final JButton linkout = new JButton(pwe.getTextLabel());
 //			linkout.setPreferredSize(new Dimension(40, 20));
-			linkout.addMouseListener(new InfoButtonListener(pwe.getXref(),
+			linkout.addMouseListener(new InfoButtonListener(pwe,
 					plugin));
 			linkoutPane.add(linkout);
 			linkoutPane.setVisible(true);
@@ -179,24 +182,27 @@ public class ComplexVizTab extends JSplitPane {
 	 * selected in the top part of the panel
 	 * 
 	 */
-	public void updateDataPanel(Xref xref) {
+	public void updateDataPanel(PathwayElement pwe) {
+		Xref xref = pwe.getXref();
 		dataPanel.removeAll();
 		dataPanel.setLayout(new BoxLayout(dataPanel, BoxLayout.PAGE_AXIS));
 
 		final PathwayElement e = PathwayElement
 				.createPathwayElement(ObjectType.DATANODE);
+		e.setDataNodeType(pwe.getDataNodeType());
 		e.setDataSource(xref.getDataSource());
 		e.setElementID(xref.getId());
+//		e.setDataNodeType(xref.getDataSource().getType());
 		final BackpageTextProvider bpt = new BackpageTextProvider();
-		bpt.addBackpageHook(new BackpageTextProvider.BackpageXrefs(swingEngine
-				.getGdbManager().getCurrentGdb()));
-		bpt.addBackpageHook(new BackpageTextProvider.BackpageXrefs(swingEngine
-				.getGdbManager().getCurrentGdb()));
+		
+//		bpt.getBackpageHTML(e);
+		bpt.addBackpageHook(new BackpageAttributes(swingEngine.getGdbManager().getCurrentGdb()));
+		bpt.addBackpageHook(new BackpageXrefs(swingEngine.getGdbManager().getCurrentGdb()));
 		bpt.addBackpageHook(new BackpageExpression(plugin.getDesktop()
 				.getGexManager()));
 		final BackpagePane bpp = new BackpagePane(bpt, swingEngine.getEngine());
 		bpp.setInput(e);
-
+		
 		bpp.addHyperlinkListener(new HyperlinkListener() {
 
 			@Override

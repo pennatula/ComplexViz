@@ -5,6 +5,7 @@ import java.awt.event.MouseListener;
 
 import org.bridgedb.Xref;
 import org.pathvisio.complexviz.ComplexVizPlugin;
+import org.pathvisio.core.model.PathwayElement;
 
 /**
  * Called when the (i) button next to a complex component is clicked.
@@ -12,18 +13,18 @@ import org.pathvisio.complexviz.ComplexVizPlugin;
  * @author anwesha
  */
 public class InfoButtonListener implements MouseListener {
-
-	private final Xref xref;
+private final PathwayElement pwe;
+//	private final Xref xref;
 	private final ComplexVizPlugin plugin;
 
-	public InfoButtonListener(Xref xref, ComplexVizPlugin plugin) {
-		this.xref = xref;
+	public InfoButtonListener(PathwayElement pwe, ComplexVizPlugin plugin) {
+		this.pwe = pwe;
 		this.plugin = plugin;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		plugin.updateData(xref);
+		plugin.updateData(pwe);
 	}
 
 	@Override

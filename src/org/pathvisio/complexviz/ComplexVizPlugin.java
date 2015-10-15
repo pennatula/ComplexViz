@@ -431,7 +431,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		return hasPathway;
 	}
 
-	public void updateData(final Xref xref) {
-		vizprotab.updateDataPanel(xref);
+	public void updateData(final PathwayElement pwe) {
+		vizprotab.updateDataPanel(pwe);
 	}
 }
