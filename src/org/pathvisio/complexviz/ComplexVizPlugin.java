@@ -370,7 +370,6 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 
 	@Override
 	public void selectionEvent(SelectionEvent e) {
-
 		switch (e.type) {
 		case SelectionEvent.OBJECT_ADDED:
 			if (e.selection.size() > 0) {
@@ -380,6 +379,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 				if (o instanceof GeneProduct) {
 					if ((((GeneProduct) o).getPathwayElement()
 							.getDataNodeType().equalsIgnoreCase("complex"))) {
+						
 						selectedElementId = ((GeneProduct) o)
 								.getPathwayElement().getElementID();
 						compwe = getComplexComponents(selectedElementId);
@@ -396,6 +396,8 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 							vizprotab.revalidate();
 							vizprotab.repaint();}
 					}else{
+						vizprotab
+						.setDataPanelText("<html><br>&nbsp;&nbsp;&nbsp;&nbsp;Not a Complex Node.</html>");
 					vizprotab
 					.setPathwayPanelText("<html><br>&nbsp;&nbsp;&nbsp;&nbsp;Not a Complex Node.</html>");}
 					vizprotab.revalidate();
