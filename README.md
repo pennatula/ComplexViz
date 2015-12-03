@@ -1,7 +1,7 @@
-# ComplexViz
+# ComplexViz plugin for PathVisio
 ComplexViz is a PathVisio Plugin. It has been developed specially for simplifying visualization of data on the many complexes of Reactome pathways. 
 
-#Releases
+##Releases
 Version available : 0.1.0
 Works with PathVisio version 3.2.1 or higher
 
