@@ -1,6 +1,6 @@
-// VizPro Plugin for PathVisio,
+// ComplexViz Plugin for PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2014 BiGCaT Bioinformatics
+// Copyright 2015 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,24 +33,23 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author anwesha
  */
-@SuppressWarnings("serial")
 public class ComplexVizPanel extends JPanel {
-	private final VisualizationManager visMgr;
-	private final JPanel methods;
+	private VisualizationManager visMgr;
+	private JPanel methods;
 
 	/**
 	 * @param visMgr
 	 */
 	public ComplexVizPanel(VisualizationManager visMgr) {
 		this.visMgr = visMgr;
-		final FormLayout layout = new FormLayout(
+		FormLayout layout = new FormLayout(
 				"pref, 4dlu, 100dlu:grow, 4dlu, left:pref",
 				"pref, 4dlu, pref, 4dlu, fill:max(250dlu;pref):grow");
 		setLayout(layout);
 		visMgr.getActiveVisualization();
-		final String vname = visMgr.getActiveVisualization().getName();
+		String vname = visMgr.getActiveVisualization().getName();
 		methods = new JPanel();
-		final CellConstraints cc = new CellConstraints();
+		CellConstraints cc = new CellConstraints();
 		add(new JLabel(vname), cc.xy(1, 1));
 		add(methods, cc.xyw(1, 5, 5));
 
@@ -60,17 +59,17 @@ public class ComplexVizPanel extends JPanel {
 	private void refresh() {
 		methods.removeAll();
 		if (visMgr != null) {
-			final Visualization v = visMgr.getActiveVisualization();
+			Visualization v = visMgr.getActiveVisualization();
 
 			// Refresh methods panel
 			if (v != null) {
-				final FormLayout layout = new FormLayout("fill:pref:grow");
-				final DefaultFormBuilder builder = new DefaultFormBuilder(
+				FormLayout layout = new FormLayout("fill:pref:grow");
+				DefaultFormBuilder builder = new DefaultFormBuilder(
 						layout, methods);
-				for (final String name : visMgr
+				for (String name : visMgr
 						.getVisualizationMethodRegistry()
 						.getRegisteredComplexMethods()) {
-					final ComplexVizMethodPanel mp = new ComplexVizMethodPanel(v, name);
+					ComplexVizMethodPanel mp = new ComplexVizMethodPanel(v, name);
 					builder.append(mp);
 					builder.nextLine();
 				}

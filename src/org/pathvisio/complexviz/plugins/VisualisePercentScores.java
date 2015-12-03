@@ -1,3 +1,19 @@
+// ComplexViz Plugin for PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2015 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 package org.pathvisio.complexviz.plugins;
 
 import java.awt.Color;
@@ -35,51 +51,27 @@ import org.pathvisio.gui.SwingEngine;
  */
 public class VisualisePercentScores extends AbstractVisualizationMethod {
 
-	static final Color DEFAULT_RULECOLOUR = Color.ORANGE;
-	static final String DEFAULT_EXPRESSION = "[Percent] > 25";
-
-	Color c = Color.ORANGE;
+	private static final Color DEFAULT_RULECOLOUR = Color.ORANGE;
+	private static final String DEFAULT_EXPRESSION = "[Percent] > 25";
 
 	private int drawModel;
 
-	private final GexManager gexManager;
+	private GexManager gexManager;
 	private String expression;
-	ColorGradient gradient;
-	private final SwingEngine se;
+	private ColorGradient gradient;
+	private SwingEngine se;
 	private Map<String, Float> cidpercentmap;
 	private Map<String, Color> cidclrmap;
 	private HashSet<String> cidset;
-	private final int RULE_MODEL = 1;
-	private final int GRADIENT_MODEL = 2;
-	private final Color DEFAULT_COMPLEX_COLOUR = Color.GRAY;
+	private int RULE_MODEL = 1;
+	private int GRADIENT_MODEL = 2;
+	private Color DEFAULT_COMPLEX_COLOUR = Color.GRAY;
 	private Color notrulecolour = Color.DARK_GRAY;
 	private Color rulecolour = Color.BLUE;
 	private ColorGradient DEFAULT_GRADIENT;
 	private final String XML_COMPLEXVIZ = "complexviz settings";
-	private final String XML_COMPLEX_EXPRESSION = "complex_colours_expression";
-	private final String XML_COMPLEX_COLOUR_STYLE = "colour style";
-	private final String XML_COMPLEX_COLOURS = "complex colours";
-	private final String XML_COMPLEX_ID = "complex_id";
 
-	// private LegendPanel lp;
-
-	static final String XML_ELEMENT = "sample";
-
-	static final String XML_ATTR_ID = "id";
-
-	static final String XML_ATTR_COLOuR = "colour";
-
-	private static String toBrowserHexValue(int number) {
-		final StringBuilder builder = new StringBuilder(
-				Integer.toHexString(number & 0xff));
-		while (builder.length() < 2) {
-			builder.append("0");
-		}
-		return builder.toString().toUpperCase();
-	}
-
-	public VisualisePercentScores(SwingEngine swingEngine,
-			GexManager gexManager, ColorSetManager csm, VisualizationManager vsm) {
+	public VisualisePercentScores(SwingEngine swingEngine, GexManager gexManager, ColorSetManager csm, VisualizationManager vsm) {
 		se = swingEngine;
 		this.gexManager = gexManager;
 		// lp = new LegendPanel(vsm);
@@ -97,7 +89,7 @@ public class VisualisePercentScores extends AbstractVisualizationMethod {
 	}
 
 	private void drawArea(final GeneProduct gp, Graphics2D g2d) {
-		final Color rgb = cidclrmap.get(gp.getPathwayElement().getElementID());
+		Color rgb = cidclrmap.get(gp.getPathwayElement().getElementID());
 		g2d.setPaint(rgb);
 		g2d.setColor(rgb);
 		g2d.fill(gp.getShape());
@@ -106,7 +98,6 @@ public class VisualisePercentScores extends AbstractVisualizationMethod {
 
 	private boolean evaluate(String expression2, Float score) {
 		Boolean booleanval = false;
-		// System.out.println("bool" + booleanval);
 		String[] exprParts;
 		Matcher matcher = Pattern.compile("\\d+").matcher(expression2);
 		if (!score.isNaN()) {
@@ -166,35 +157,25 @@ public class VisualisePercentScores extends AbstractVisualizationMethod {
 		return booleanval;
 	}
 
-	private String getColorHex(Color clr) {
-		final int r = clr.getRed();
-		final int g = clr.getGreen();
-		final int b = clr.getBlue();
-		return "#" + toBrowserHexValue(r) + toBrowserHexValue(g)
-				+ toBrowserHexValue(b);
-	}
-
 	private Color getColour(Float float1) {
 		Color clr = DEFAULT_COMPLEX_COLOUR;
 		if (RULE_MODEL == drawModel) {
 			clr = getColourByRule(float1, clr);
 		} else if (GRADIENT_MODEL == drawModel) {
-			// System.out.println("gradient used");
 			clr = getColourByGradient(float1, clr);
 		}
 		return clr;
 	}
 
 	private Color getColourByGradient(Float float1, Color clr) {
-		final ColorGradient gradientused = getGradient();
+		ColorGradient gradientused = getGradient();
 		if (gradientused == null)
 			return clr;
-		final double[] vals = gradientused.getMinMax();
-		final double minval = vals[0];
-		final double maxval = vals[1];
+		double[] vals = gradientused.getMinMax();
+		double minval = vals[0];
+		double maxval = vals[1];
 
-		final VPathway vp = getVisualization().getManager().getEngine()
-				.getActiveVPathway();
+		VPathway vp = getVisualization().getManager().getEngine().getActiveVPathway();
 		if (vp != null) {
 			if (float1 >= minval && float1 <= maxval) {
 				clr = gradientused.getColor(float1);
@@ -204,32 +185,24 @@ public class VisualisePercentScores extends AbstractVisualizationMethod {
 	}
 
 	private Color getColourByRule(Float float1, Color clr) {
-		final Color rc = getRuleColor();
-		final Color nrc = getNotRuleColor();
+		Color rc = getRuleColor();
+		Color nrc = getNotRuleColor();
 		String expr = getExpression();
-		// System.out.println("rule color set: " + rc.getRGB());
 
-		// final String expr = expression == null ? DEFAULT_EXPRESSION
-		// : expression;
-		final VPathway vp = getVisualization().getManager().getEngine()
-				.getActiveVPathway();
+		VPathway vp = getVisualization().getManager().getEngine().getActiveVPathway();
 		if (vp != null) {
 			if (evaluate(expr, float1)) {
-
 				clr = rc;
 			} else {
 				clr = nrc;
 			}
-
 		}
-		// System.out.println("rule color set: " + clr.getRGB());
 		return clr;
 	}
 
 	@Override
 	public JPanel getConfigurationPanel() {
-		final JPanel complexpanel = new ComplexStatisticsPanel(this, se,
-				gexManager);
+		JPanel complexpanel = new ComplexStatisticsPanel(this, se, gexManager);
 		return complexpanel;
 	}
 
@@ -238,12 +211,8 @@ public class VisualisePercentScores extends AbstractVisualizationMethod {
 		return "Change colour of complexes based on component data";
 	}
 
-	GexManager getGexManager() {
-		return gexManager;
-	}
-
 	public ColorGradient getGradient() {
-		final ColorGradient cg = gradient == null ? DEFAULT_GRADIENT : gradient;
+		ColorGradient cg = gradient == null ? DEFAULT_GRADIENT : gradient;
 		return cg;
 	}
 
@@ -255,7 +224,7 @@ public class VisualisePercentScores extends AbstractVisualizationMethod {
 	private Color getNotRuleColor() {
 		Color nrc = notrulecolour == null ? DEFAULT_COMPLEX_COLOUR
 				: notrulecolour;
-		final VPathway vp = getVisualization().getManager().getEngine()
+		VPathway vp = getVisualization().getManager().getEngine()
 				.getActiveVPathway();
 		if (vp != null) {
 			nrc = new Color(nrc.getRGB());
@@ -265,8 +234,7 @@ public class VisualisePercentScores extends AbstractVisualizationMethod {
 
 	public Color getRuleColor() {
 		Color rc = rulecolour == null ? DEFAULT_RULECOLOUR : rulecolour;
-		final VPathway vp = getVisualization().getManager().getEngine()
-				.getActiveVPathway();
+		VPathway vp = getVisualization().getManager().getEngine().getActiveVPathway();
 		if (vp != null) {
 			rc = new Color(rc.getRGB());
 		}
@@ -373,36 +341,6 @@ public class VisualisePercentScores extends AbstractVisualizationMethod {
 	@Override
 	public final Element toXML() {
 		final Element xml = super.toXML();
-		// final Element elm = new Element(XML_COMPLEXVIZ);
-		// xml.addContent(elm);
-		// for (final String key : cidclrmap.keySet()) {
-		// final Element selm = new Element(XML_COMPLEX_ID);
-		// final Color bc = cidclrmap.get(key);
-		// final String hex = String.format("#%02x%02x%02x", bc.getRed(),
-		// bc.getGreen(), bc.getBlue());
-		// selm.setAttribute(key, hex);
-		// xml.addContent(selm);
-		// }
-		// final Element elm = new Element(XML_COMPLEXVIZ);
-		// xml.addContent(elm);
-
-		// final Color bc = cidclrmap.get(key);
-		// final String hex = String.format("#%02x%02x%02x", bc.getRed(),
-		// bc.getGreen(), bc.getBlue());
-		// final Element selm = new Element(XML_COMPLEXVIZ);
-		// selm.setAttribute("expression",expression);
-		// final Element telm = new Element(XML_COMPLEX_EXPRESSION);
-		// telm.setAttribute("expression", expression);
-		// final Element foelm = new Element(XML_COMPLEX_COLOUR_STYLE);
-		// foelm.setAttribute("style", String.valueOf(RULE_MODEL));
-		// final Element fielm = new Element(XML_COMPLEX_COLOURS);
-		// fielm.setAttribute("colours", "red,blue");
-		//
-		// // xml.addContent(selm);
-		// xml.addContent(telm);
-		// xml.addContent(foelm);
-		// xml.addContent(fielm);
-		//
 		return xml;
 	}
 
@@ -423,7 +361,6 @@ public class VisualisePercentScores extends AbstractVisualizationMethod {
 
 	@Override
 	public Component visualizeOnToolTip(Graphics g) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -1,6 +1,6 @@
 // ComplexViz Plugin for PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2015 BiGCaT Bioinformatics
+// Copyright 2015 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 package org.pathvisio.complexviz;
 
 /**
@@ -29,15 +28,12 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-
 		plugin = new ComplexVizPlugin();
 		context.registerService(Plugin.class.getName(), plugin, null);
-
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin.done();
-
 	}
 }

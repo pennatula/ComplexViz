@@ -1,6 +1,6 @@
-// VizPro Plugin for PathVisio,
+// ComplexViz Plugin for PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2014 BiGCaT Bioinformatics
+// Copyright 2015 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,35 +31,23 @@ import org.pathvisio.gui.dialogs.OkCancelDialog;
  * 
  * @author anwesha
  */
-@SuppressWarnings("serial")
 public class ComplexVizDialog extends OkCancelDialog {
 
-	ComplexVizPanel vizproPanel;
-	VisualizationManager visMgr;
+	private ComplexVizPanel vizproPanel;
+	private VisualizationManager visMgr;
 
 	/**
 	 * @param visMgr
 	 * @param frame
 	 * @param locationComp
 	 */
-	public ComplexVizDialog(VisualizationManager visMgr, Frame frame,
-			Component locationComp) {
-		super(frame, "Visualization options for Complexes", locationComp, true,
-				false);
+	public ComplexVizDialog(VisualizationManager visMgr, Frame frame, Component locationComp) {
+		super(frame, "Visualization options for Complexes", locationComp, true, false);
 
 		this.visMgr = visMgr;
 
 		vizproPanel = new ComplexVizPanel(visMgr);
 		setDialogComponent(new JScrollPane(vizproPanel));
-
-		// // If there is no visualization yet, create one
-		// if (visMgr.getVisualizations().size() == 0) {
-		// visMgr.addVisualization(new Visualization("untitled"));
-		// }
-		// if (visMgr.getActiveVisualization() == null) {
-		// visMgr.setActiveVisualization(0);
-		// }
-
 		pack();
 		// we have to do this again after pack():
 		setLocationRelativeTo(locationComp);

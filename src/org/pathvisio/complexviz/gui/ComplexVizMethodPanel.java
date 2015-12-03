@@ -1,6 +1,6 @@
-// VizPro Plugin for PathVisio,
+// ComplexViz Plugin for PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2014 BiGCaT Bioinformatics
+// Copyright 2015 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,12 +36,11 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author anwesha
  */
-@SuppressWarnings("serial")
 public class ComplexVizMethodPanel extends JPanel implements ActionListener {
-	private final VisualizationMethod method;
-	private final Visualization visualization;
-	private final JPanel configPanel;
-	private final JCheckBox checkBox;
+	private VisualizationMethod method;
+	private Visualization visualization;
+	private JPanel configPanel;
+	private JCheckBox checkBox;
 
 	/**
 	 * @param v
@@ -51,23 +50,21 @@ public class ComplexVizMethodPanel extends JPanel implements ActionListener {
 		visualization = v;
 		boolean isActive = true;
 		if (v.getMethod(name) == null) {
-			method = v.getManager().getVisualizationMethodRegistry()
-					.createComplexVisualizationMethod(name);
+			method = v.getManager().getVisualizationMethodRegistry().createComplexVisualizationMethod(name);
 			isActive = false;
 		} else {
 			method = v.getMethod(name);
 		}
 
-		final JPanel top = new JPanel();
-		final FormLayout layout = new FormLayout(
-				"pref, 4dlu, pref, 2dlu, pref", "pref");
+		JPanel top = new JPanel();
+		FormLayout layout = new FormLayout("pref, 4dlu, pref, 2dlu, pref", "pref");
 		top.setLayout(layout);
 
 		checkBox = new JCheckBox();
 		checkBox.addActionListener(this);
-		final JLabel nameLabel = new JLabel(method.getName() + ":");
+		JLabel nameLabel = new JLabel(method.getName() + ":");
 		nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
-		final CellConstraints cc = new CellConstraints();
+		CellConstraints cc = new CellConstraints();
 		top.add(checkBox, cc.xy(1, 1));
 		top.add(nameLabel, cc.xy(3, 1));
 		top.add(new JLabel(method.getDescription()), cc.xy(5, 1));
@@ -76,7 +73,7 @@ public class ComplexVizMethodPanel extends JPanel implements ActionListener {
 
 		add(top, cc.xy(1, 1));
 
-		final JPanel bottom = new JPanel();
+		JPanel bottom = new JPanel();
 		bottom.setLayout(new FormLayout("15dlu, fill:pref:grow", "pref"));
 		configPanel = method.getConfigurationPanel();
 		configPanel.setBorder(BorderFactory.createEtchedBorder());

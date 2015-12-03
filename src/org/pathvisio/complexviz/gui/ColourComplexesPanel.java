@@ -1,6 +1,6 @@
-// PathVisio,
+// ComplexViz Plugin for PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2011 BiGCaT Bioinformatics
+// Copyright 2015 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,10 +18,7 @@ package org.pathvisio.complexviz.gui;
 
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
-import java.awt.Desktop.Action;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -38,7 +35,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -49,13 +45,10 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.jdom.Element;
 import org.pathvisio.complexviz.plugins.VisualisePercentScores;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.desktop.util.TextFieldUtils;
 import org.pathvisio.desktop.visualization.ColorGradient;
-import org.pathvisio.desktop.visualization.ColorGradient.ColorValuePair;
-import org.pathvisio.desktop.visualization.ColorSetManager;
 import org.pathvisio.desktop.visualization.Criterion;
 import org.pathvisio.visualization.gui.ColorGradientCombo;
 import org.pathvisio.visualization.gui.ColorGradientPanel;
@@ -70,30 +63,23 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class ColourComplexesPanel extends JPanel implements ActionListener {
 	
-//	private ComplexLegendPanel lp;
-
 	private class CriterionPanel extends JPanel {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private final JTextField txtExpr;
-		private final JLabel lblError;
+		private JTextField txtExpr;
+		private JLabel lblError;
 		private static final String CRIT_VALID = "OK";
-		private final Criterion myCriterion = new Criterion();
-		private final List<String> percentscore = Arrays.asList("Percent");
+		private Criterion myCriterion = new Criterion();
+		private List<String> percentscore = Arrays.asList("Percent");
 
 		private CriterionPanel() {
 			super();
-			final FormLayout layout = new FormLayout(
+			FormLayout layout = new FormLayout(
 					"4dlu, min:grow, 4dlu, min:grow, 4dlu",
 					"4dlu, pref, 4dlu, pref, 4dlu, [50dlu,min]:grow, 4dlu, pref, 4dlu");
 			layout.setColumnGroups(new int[][] { { 2, 4 } });
 			setLayout(layout);
-			final CellConstraints cc = new CellConstraints();
+			CellConstraints cc = new CellConstraints();
 			add(new JLabel("Enter an expression (e.g. [Percent] > 25 )"), cc.xy(2, 2));
 			txtExpr = new JTextField(40);
-//			txtExpr.setText("[Percent] > 25");
 			txtExpr.getDocument().addDocumentListener(new DocumentListener() {
 				@Override
 				public void changedUpdate(final DocumentEvent e) {
@@ -112,18 +98,17 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 			});
 
 			add(txtExpr, cc.xyw(2, 4, 3));
-			final String[] OPERANDS = { "<", ">", "<=", ">=","==", "!=" };
-			final JList lstOperators = new JList(OPERANDS);
+			String[] OPERANDS = { "<", ">", "<=", ">=","==", "!=" };
+			JList lstOperators = new JList(OPERANDS);
 			add(new JScrollPane(lstOperators), cc.xy(2, 6));
 
 			lstOperators.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(final MouseEvent me) {
-					final int selectedIndex = lstOperators.getSelectedIndex();
+					int selectedIndex = lstOperators.getSelectedIndex();
 					if (selectedIndex >= 0) {
-						final String toInsert = OPERANDS[selectedIndex];
-						TextFieldUtils.insertAtCursorWithSpace(txtExpr,
-								toInsert);
+						String toInsert = OPERANDS[selectedIndex];
+						TextFieldUtils.insertAtCursorWithSpace(txtExpr, toInsert);
 					}
 					// after clicking on the list, move focus back to text field
 					// so
@@ -136,12 +121,12 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 				}
 			});
 
-			final JList lstSamples = new JList(percentscore.toArray());
+			JList lstSamples = new JList(percentscore.toArray());
 
 			lstSamples.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(final MouseEvent me) {
-					final String toInsert = "[" + percentscore.get(0) + "]";
+					String toInsert = "[" + percentscore.get(0) + "]";
 					TextFieldUtils.insertAtCursorWithSpace(txtExpr, toInsert);
 					// after clicking on the list, move focus back to text field
 					// so
@@ -169,8 +154,7 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 		private void updateCriterion() {
 			method.setExpression(txtExpr.getText());
 			method.setComplexColours();
-			final String error = myCriterion.setExpression(txtExpr.getText(),
-					percentscore);
+			String error = myCriterion.setExpression(txtExpr.getText(), percentscore);
 			if (error != null) {
 				lblError.setText(error);
 			} else {
@@ -180,12 +164,10 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 	}
 
 	class Gradient extends JPanel implements ActionListener {
-
-		private static final long serialVersionUID = 1L;
-		private final ColorGradientCombo gradientCombo;
+		private ColorGradientCombo gradientCombo;
 		private ColorGradient colourgradient;
 		private JPanel valuesPanel;
-		private final JPanel gradientPanel;
+		private JPanel gradientPanel;
 
 		public Gradient() {
 			setModel(GRADIENT_MODEL);
@@ -194,17 +176,13 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 			CellConstraints cc = new CellConstraints();
 			add(gradientPanel, cc.xy(1, 1));
 
-			gradientPanel.setLayout(new FormLayout("pref, 3dlu, pref:grow",
-					"pref, pref, pref"));
+			gradientPanel.setLayout(new FormLayout("pref, 3dlu, pref:grow", "pref, pref, pref"));
 
 			gradientCombo = new ColorGradientCombo();
-
 			gradientCombo.addActionListener(this);
 
 			gradientPanel.add(gradientCombo, cc.xy(1, 1));
-
 			add(gradientPanel);
-
 			refresh();
 		}
 
@@ -218,8 +196,7 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 
 		private void refresh() {
 			// Get default gradients
-			List<ColorGradient> gradients = ColorGradient
-					.createDefaultGradients();
+			List<ColorGradient> gradients = ColorGradient.createDefaultGradients();
 
 			// Set percentage defaults
 			for (ColorGradient cg : gradients) {
@@ -234,7 +211,6 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 					if (val == 1) {
 						cg.getColorValuePairs().get(i).setValue(100);
 					}
-
 				}
 			}
 
@@ -254,7 +230,6 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 
 			// Refresh colourgradient values
 			refreshValuesPanel();
-
 			revalidate();
 		}
 
@@ -276,18 +251,12 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 
 	/** Panel for editing colorByLine */
 	class Rule extends JPanel  implements ActionListener{
-
-		private static final long serialVersionUID = 1L;
-		private final JPanel rulePanel;
-//		private final CriterionPanel critPanel;
-		private final JPanel clrPanel;
-//		private JButton rulecolourButton;
-//		private JButton notrulecolourButton;
+		private JPanel rulePanel;
+		private JPanel clrPanel;
 
 		public Rule() {
-
 			rulePanel = new JPanel();
-			final BoxLayout bl = new BoxLayout(rulePanel, BoxLayout.Y_AXIS);
+			BoxLayout bl = new BoxLayout(rulePanel, BoxLayout.Y_AXIS);
 			rulePanel.setLayout(bl);
 
 			critPanel = new CriterionPanel();
@@ -295,11 +264,11 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 
 			clrPanel = new JPanel();
 			clrPanel.setLayout(new GridBagLayout());
-			final GridBagConstraints cc = new GridBagConstraints();
-			final JLabel clr = new JLabel("Colour (rule met)");
+			GridBagConstraints cc = new GridBagConstraints();
+			JLabel clr = new JLabel("Colour (rule met)");
 			rulecolourButton = new JButton("...");
 
-			final JLabel notclr = new JLabel("Colour (rule not met)");
+			JLabel notclr = new JLabel("Colour (rule not met)");
 			notrulecolourButton = new JButton("...");
 
 			/**
@@ -320,12 +289,10 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 			rulecolourButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					final Color ruleColour = JColorChooser.showDialog(
-							rulecolourButton, "Choose", Color.BLUE);
+					Color ruleColour = JColorChooser.showDialog(rulecolourButton, "Choose", Color.BLUE);
 					rulecolourButton.setForeground(ruleColour);
 					rulecolourButton.setBackground(ruleColour);
-					method.setExpression(critPanel.getCriterion()
-							.getExpression());
+					method.setExpression(critPanel.getCriterion().getExpression());
 					method.setRuleColour(ruleColour);
 					method.setComplexColours();
 				}
@@ -333,8 +300,7 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 			notrulecolourButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					final Color notruleColour = JColorChooser.showDialog(
-							rulecolourButton, "Choose", Color.GRAY);
+					Color notruleColour = JColorChooser.showDialog(rulecolourButton, "Choose", Color.GRAY);
 					notrulecolourButton.setForeground(notruleColour);
 					notrulecolourButton.setBackground(notruleColour);
 					method.setExpression(critPanel.getCriterion()
@@ -380,7 +346,6 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 			}
 	}
 
-	private static final long serialVersionUID = 1L;
 	static final String ACTION_RULE = "Colour Rule";
 	static final String ACTION_GRADIENT = "Colour Gradient";
 	static final String ACTION_OPTIONS = "Rule Visualization Options";
@@ -389,39 +354,24 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 	static final int RULE_MODEL = 1;
 
 	static final int GRADIENT_MODEL = 2;
-	static final ImageIcon COLOR_PICK_ICON = new ImageIcon(
-			Resources.getResourceURL("colorpicker.gif"));
-	static final Cursor COLOR_PICK_CURS = Toolkit.getDefaultToolkit()
-			.createCustomCursor(COLOR_PICK_ICON.getImage(), new Point(4, 19),
-					"Color picker");
-	private final VisualisePercentScores method;
-	private final Rule rule;
-	private final Gradient gradient;
-	private final CardLayout cardLayout;
-	private final JPanel settings;
-	private final ColorSetManager csm;
-
+	static final ImageIcon COLOR_PICK_ICON = new ImageIcon(Resources.getResourceURL("colorpicker.gif"));
+	static final Cursor COLOR_PICK_CURS = Toolkit.getDefaultToolkit().createCustomCursor(COLOR_PICK_ICON.getImage(), new Point(4, 19),"Color picker");
+	private VisualisePercentScores method;
+	private Rule rule;
+	private Gradient gradient;
+	private CardLayout cardLayout;
+	private JPanel settings;
 	private int model;
-
-	JButton options = new JButton("Edit Rule Visualization");
-
-//	private ColorGradientCombo gradientCombo;
 	private CriterionPanel critPanel;
 	private JButton notrulecolourButton ;
 	private JButton rulecolourButton;
-	private boolean useGradient = false;
-	private boolean useRule = false;
 	
 
-	public ColourComplexesPanel(final VisualisePercentScores method, ColorSetManager csm) {
+	public ColourComplexesPanel(final VisualisePercentScores method) {
 		this.method = method;
-		this.csm = csm;
-//		lp = new ComplexLegendPanel();
-		model = RULE_MODEL;
-				
+		model = RULE_MODEL;	
 		method.setDefaultExpresion();
 		method.setComplexColours();
-//		lp.addDefault();
 		setLayout(new FormLayout(
 				"4dlu, pref, 4dlu, pref, fill:pref:grow, 4dlu",
 				"4dlu, pref, 4dlu, fill:pref:grow, 4dlu"));
@@ -430,7 +380,7 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 		BoxLayout bl = new BoxLayout(btnPanel, BoxLayout.X_AXIS);
 		btnPanel.setLayout(bl);
 
-		final ButtonGroup buttons = new ButtonGroup();
+		ButtonGroup buttons = new ButtonGroup();
 		/*
 		 * Colour rule
 		 */
@@ -442,30 +392,15 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 		/*
 		 * Colour gradient
 		 */
-		final JRadioButton rgBasic = new JRadioButton(ACTION_GRADIENT);
+		JRadioButton rgBasic = new JRadioButton(ACTION_GRADIENT);
 		rgBasic.setActionCommand(ACTION_GRADIENT);
 		rgBasic.addActionListener(this);
 		buttons.add(rgBasic);
-		
-//		/*
-//		 * Update Legend
-//		 */
-//		final JButton legendbtn = new JButton("Update Legend");
-//		legendbtn.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent ae2) {
-//				updateLegend();
-//			}
-//		});
 
-		final CellConstraints cc = new CellConstraints();
-//		add(rbBasic, cc.xy(2, 2));
-//		add(rgBasic, cc.xy(4, 2));
-//		add(legendbtn, cc.xy(6, 2));
+		CellConstraints cc = new CellConstraints();
 
 		btnPanel.add(rbBasic);
 		btnPanel.add(rgBasic);
-//		btnPanel.add(legendbtn);
 		
 		add(btnPanel,cc.xyw(2, 2, 4));
 		
@@ -486,29 +421,22 @@ public class ColourComplexesPanel extends JPanel implements ActionListener {
 
 	}
 
-//	protected void updateLegend() {
-//		lp.addColours(useGradient,useRule);
-//}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final String action = e.getActionCommand();
 		if (ACTION_RULE.equals(action)) {
 			model = RULE_MODEL;
 			rule.setModel(model);
-			method.setExpression(critPanel.getCriterion()
-					.getExpression());
+			method.setExpression(critPanel.getCriterion().getExpression());
 			method.setRuleColour(rulecolourButton.getForeground());
 			method.setNotRuleColour(notrulecolourButton.getForeground());
 			method.setComplexColours();
-			useRule = true;
 			cardLayout.show(settings, action);
 			} else if (ACTION_GRADIENT.equals(action)) {
 			model = GRADIENT_MODEL;
 			gradient.setModel(model);
 			method.setComplexColours();
 			cardLayout.show(settings, action);
-			useGradient = true;
 		}
 	}
 }

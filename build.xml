@@ -1,16 +1,11 @@
 <?xml version="1.0"?>
-<project name="ComplexViz" default="jar" basedir=".">
+<project name="ComplexViz" default="install" basedir=".">
 
-	<property name="version.number" value="1.0.0" />
+	<property name="version.number" value="0.1.0" />
 	<property name="pathvisio.dir" value="/home/anwesha/workspace/pathvisio/" />
-	<property name="common.bundles" value="/home/anwesha/workspace/pvplugins/common-bundles/trunk/" />
+	<property name="bundle.dest" value="dist"/>
+	<property name="jar.name" value="${ant.project.name}_${version.number}.jar"/>
 	
-	<import file="${common.bundles}/plugin-common.xml"/>
-		<!-- embedded jars are embedded in the resulting bundle -->
-	<path id="embed.jars">
-			<!-- None -->
-		</path>
-
 	<path id="project.class.path">
 		<fileset dir="${pathvisio.dir}/modules">
 			<include name="org.pathvisio.core.jar" />
@@ -19,36 +14,18 @@
 			<include name="org.pathvisio.data.jar" />
 			<include name="org.pathvisio.visualization.jar" />	
 		</fileset>
-		<fileset dir="${common.bundles}">
-			<include name="com.google.collect*.jar" />
-			<include name="com.springsource.javax.xml.rpc-1.1.0.jar" />
-		</fileset>
 		<fileset dir="${pathvisio.dir}/lib">
 			<include name="org.bridgedb.jar" />
 			<include name="org.bridgedb.gui.jar" />
 			<include name="felix.jar" />
 			<include name="com.springsource.org.jdom-1.1.0.jar" />
 			<include name="org.pathvisio.jgoodies.forms.jar" />
-			<include name="javax.xml.rpc_1.1.0.v201005080400.jar"/>
 		</fileset>
 	</path>
 
-	<target name="prepare" depends ="prepare-jar-name,prepare-common">
+	<target name="prepare">
 			<mkdir dir="build"/>
 			<mkdir dir="${bundle.dest}"/>
-			<mkdir dir="build/resources"/>
-		<echo>Copying resources and Libraries</echo>
-			<copy toDir="build/resources">
-				<fileset dir="resources">
-					<include name="*"/>
-				</fileset>
-			</copy>
-			<copy toDir="build/lib">
-					<fileset dir="${common.bundles}">
-						<include name="com.google.collect*.jar" />
-						<include name="com.springsource.javax.xml.rpc-1.1.0.jar" />
-					</fileset>
-			</copy>
 			<fail message="Can't find ${pathvisio.dir}/modules/org.pathvisio.core.jar, please specify the path to pathvisio with -Dpathvisio.dir=....">
 				<condition>
 					<not><available file="${pathvisio.dir}/modules/org.pathvisio.core.jar"/></not>
@@ -58,6 +35,7 @@
 
 		<target name="clean">
 			<delete dir="build"/>
+			<delete dir="${bundle.dest}"/>
 			<delete file="${jar.name}"/>
 		</target>
 
@@ -73,7 +51,7 @@
 
 		<target name="jar" depends="compile"> 
 			<echo>Creating JAR: ${jar.name}</echo>
-			<jar jarfile="${ant.project.name}_${version.number}.jar" manifest="META-INF/MANIFEST.MF">
+			<jar jarfile="${jar.name}" manifest="META-INF/MANIFEST.MF">
 			    <fileset dir="build">
 				    <include name="**/*"/>
 				</fileset>
@@ -85,26 +63,7 @@
 				<fileset dir=".">
 					<include name="${jar.name}"/>
 				</fileset>
-				<fileset dir="${common.bundles}">
-						<include name="com.google.collect*.jar" />
-					</fileset>
-					<fileset dir="${org.pathvisio.sbgn.dir}">
-						<include name="dist/org.pathvisio.sbgn.jar" />
-					</fileset>
-					<fileset dir="${pathvisio.dir}/lib">
-						<include name="org.bridgedb.jar" />
-						<include name="org.bridgedb.gui.jar" />
-						<include name="felix.jar" />
-						<include name="com.springsource.org.jdom-1.1.0.jar" />
-						<include name="org.pathvisio.jgoodies.forms.jar" />
-						<include name="javax.xml.rpc_1.1.0.v201005080400.jar"/>
-					</fileset>
 			</copy>
 			<delete file="${jar.name}"/>
 		</target>
-
-		<target name="dist-clean" depends="clean">
-			<delete dir="${bundle.dest}"/>
-		</target>
-
 </project>

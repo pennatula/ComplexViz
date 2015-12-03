@@ -1,3 +1,19 @@
+// ComplexViz Plugin for PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2015 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 package org.pathvisio.complexviz;
 
 import java.awt.Color;
@@ -17,18 +33,18 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.bridgedb.Xref;
 import org.pathvisio.complexviz.gui.ComplexVizDialog;
 import org.pathvisio.complexviz.gui.ComplexVizTab;
 import org.pathvisio.complexviz.plugins.ColourComplexBorder;
-import org.pathvisio.complexviz.plugins.VisualisePercentScores;
 import org.pathvisio.complexviz.plugins.ComplexLabel;
+import org.pathvisio.complexviz.plugins.VisualisePercentScores;
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.view.GeneProduct;
 import org.pathvisio.core.view.Graphics;
+import org.pathvisio.core.view.GraphicsShape;
 import org.pathvisio.core.view.SelectionBox.SelectionEvent;
 import org.pathvisio.core.view.SelectionBox.SelectionListener;
 import org.pathvisio.core.view.VPathway;
@@ -49,126 +65,34 @@ import org.pathvisio.gui.PathwayElementMenuListener.PathwayElementMenuHook;
  * rules set by the user
  * 
  * @author anwesha
+ * @author mkutmon
  * 
  */
 
-public class ComplexVizPlugin implements Plugin, DocumentListener,
-		ApplicationEventListener, SelectionListener, ChangeListener {
-
-	/**
-	 * Action / Menu item for opening the VizPro dialog
-	 */
-	public static class VisualizationAction extends AbstractAction implements
-			GexManagerListener {
-		private static final long serialVersionUID = 1L;
-		MainPanel mainPanel;
-		private final PvDesktop ste;
-		private VPathwayElement affectedObject;
-
-		public VisualizationAction(PvDesktop ste) {
-			this.ste = ste;
-			putValue(NAME, "ComplexViz options");
-			mainPanel = ste.getSwingEngine().getApplicationPanel();
-			setEnabled(ste.getGexManager().isConnected());
-			ste.getGexManager().addListener(this);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			new ComplexVizDialog(ste.getVisualizationManager(), ste
-					.getSwingEngine().getFrame(), mainPanel).setVisible(true);
-		}
-
-		@Override
-		public void gexManagerEvent(GexManagerEvent e) {
-			final boolean isConnected = ste.getGexManager().isConnected();
-			setEnabled(isConnected);
-		}
-	}
-
-	private class VizProAction extends AbstractAction {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-
-		VizProAction(boolean b) {
-			putValue(NAME, "Highlight Complex / Components");
-		}
-
-		/**
-		 * called when the user selects the menu item
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			final VPathway vPathway = desktop.getSwingEngine().getEngine()
-					.getActiveVPathway();
-			final List<Graphics> selection = vPathway.getSelectedGraphics();
-			final Graphics g = selection.get(0);
-			if (g instanceof GeneProduct) {
-				final GeneProduct gp = (GeneProduct) g;
-				if (gp.getPathwayElement().getDataNodeType()
-						.equalsIgnoreCase("complex")) {
-					final String query = gp.getPathwayElement().getElementID();
-					findComponents(query);
-				} else {
-					if(!gp.getPathwayElement().getDynamicProperty(COMPLEX_ID).isEmpty()){
-						final String query = gp.getPathwayElement().getDynamicProperty(COMPLEX_ID);
-						findParentComplex(query);
-					}else{
-						JOptionPane.showMessageDialog(desktop.getFrame(),
-								"Please select a complex or complex component node.", "Wrong selection",
-								JOptionPane.ERROR_MESSAGE);	
-					}
-					
-				}
-			}
-		}
-	}
+public class ComplexVizPlugin implements Plugin, DocumentListener, ApplicationEventListener, SelectionListener, ChangeListener {
 
 	private PvDesktop desktop;
 	private ComplexVizPlugin plugin;
 	private ComplexVizTab vizprotab;
 	private JTabbedPane sidebarTabbedPane;
-
-	private Set<PathwayElement> compwe = new HashSet<PathwayElement>();
-
-	private String selectedElementId;
-//	private ComplexLegendPanel legendtab;
+	private PathwayElement selectedElementId;
 	private String COMPLEX_ID = "complex_id";
-	
-	//TODO save the visualization
-	// save criteria [P.Value] < 0.05
-
-	// private final VizProAction vizproAction = new VizProAction(true);
 
 	@Override
 	public void applicationEvent(ApplicationEvent e) {
+		vizprotab.clear();
 		switch (e.getType()) {
-		case VPATHWAY_OPENED: {
+		case VPATHWAY_OPENED: 
 			((VPathway) e.getSource()).addSelectionListener(this);
-//			for (final PathwayElement o : ((Pathway) e.getSource())
-//					.getDataObjects()) {
-//				if (o.getDataNodeType().equalsIgnoreCase("complex")) {
-//					compwe = getComplexComponents(o.getElementID());
-//				}
-//			}
-		}
 			break;
-		case VPATHWAY_CREATED: {
+		case VPATHWAY_CREATED: 
 			((VPathway) e.getSource()).addSelectionListener(this);
-//			for (final PathwayElement o : ((Pathway) e.getSource())
-//					.getDataObjects()) {
-//				if (o.getDataNodeType().equalsIgnoreCase("complex")) {
-//					compwe = getComplexComponents(o.getElementID());
-//				}
-//			}
-		}
 			break;
-			
-		case VPATHWAY_DISPOSED: {
+		case VPATHWAY_DISPOSED: 
 			((VPathway) e.getSource()).removeSelectionListener(this);
-		}
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -185,48 +109,39 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		sidebarTabbedPane = desktop.getSideBarTabbedPane();
 		desktop.getSwingEngine().getEngine().addApplicationEventListener(this);
 		sidebarTabbedPane.add("Components", vizprotab);
-		/*
-		 * Create complex legend tab
-		 */
-//		legendtab = new ComplexLegendPanel(desktop.getVisualizationManager());
-//		sidebarTabbedPane.add("Complex Legend", legendtab);
 	}
+	
+	private VisualizationAction vizAction;
 
 	@Override
 	public void done() {
-		desktop.getSwingEngine().getEngine()
-				.removeApplicationEventListener(this);
+		desktop.getSwingEngine().getEngine().removeApplicationEventListener(this);
+		desktop.unregisterMenuAction("Data", vizAction);
+		desktop.getSideBarTabbedPane().remove(vizprotab);
+
 	}
 
 	private void findComponents(String q) {
 		if (q.length() == 0)
 			return; // defensive coding, button should have been disabled anyway
-		final String query = q.toLowerCase();
-		final Set<PathwayElement> result = new HashSet<PathwayElement>();
-		final Pathway pathway = desktop.getSwingEngine().getEngine()
-				.getActivePathway();
+		String query = q.toLowerCase();
+		Set<PathwayElement> result = new HashSet<PathwayElement>();
+		Pathway pathway = desktop.getSwingEngine().getEngine().getActivePathway();
 		if (pathway == null)
 			return; // defensive coding, button and text field should have been
 					// disabled anyway
-		for (final PathwayElement elt : pathway.getDataObjects()) {
-//			final String parent_complex_id = elt.getTextLabel();
-//			if (parent_complex_id != null
-//					&& parent_complex_id.toLowerCase().contains(query)) {
-//				result.add(elt);
-//			}
-
-			final String id = elt.getDynamicProperty(COMPLEX_ID );
+		for (PathwayElement elt : pathway.getDataObjects()) {
+			String id = elt.getDynamicProperty(COMPLEX_ID );
 			if (id != null && id.toLowerCase().contains(query)) {
 				result.add(elt);
 			}
 		}
 		Rectangle2D interestingRect = null;
-		final VPathway vpwy = desktop.getSwingEngine().getEngine()
-				.getActiveVPathway();
+		VPathway vpwy = desktop.getSwingEngine().getEngine().getActiveVPathway();
 		vpwy.resetHighlight();
-		for (final PathwayElement elt : result) {
-			final VPathwayElement velt = vpwy.getPathwayElementView(elt);
-			final Color hc = new Color(128, 0, 128);
+		for (PathwayElement elt : result) {
+			VPathwayElement velt = vpwy.getPathwayElementView(elt);
+			Color hc = new Color(128, 0, 128);
 			velt.highlight(hc);
 			if (interestingRect == null) {
 				interestingRect = velt.getVBounds();
@@ -243,26 +158,25 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 	private void findParentComplex(String q) {
 		if (q.length() == 0)
 			return; // defensive coding, button should have been disabled anyway
-		final String query = q.toLowerCase();
-		final Set<PathwayElement> result = new HashSet<PathwayElement>();
-		final Pathway pathway = desktop.getSwingEngine().getEngine()
-				.getActivePathway();
+		String query = q.toLowerCase();
+		Set<PathwayElement> result = new HashSet<PathwayElement>();
+		Pathway pathway = desktop.getSwingEngine().getEngine().getActivePathway();
 		if (pathway == null)
 			return; // defensive coding, button and text field should have been
 					// disabled anyway
-		for (final PathwayElement elt : pathway.getDataObjects()) {
-			final String id = elt.getXref().getId();
+		for (PathwayElement elt : pathway.getDataObjects()) {
+			String id = elt.getXref().getId();
 			if (id != null && id.toLowerCase().contains(query)) {
 				result.add(elt);
 			}
 		}
 		Rectangle2D interestingRect = null;
-		final VPathway vpwy = desktop.getSwingEngine().getEngine()
+		VPathway vpwy = desktop.getSwingEngine().getEngine()
 				.getActiveVPathway();
 		vpwy.resetHighlight();
-		for (final PathwayElement elt : result) {
-			final VPathwayElement velt = vpwy.getPathwayElementView(elt);
-			final Color hc = new Color(128, 0, 128);
+		for (PathwayElement elt : result) {
+			VPathwayElement velt = vpwy.getPathwayElementView(elt);
+			Color hc = new Color(128, 0, 128);
 			velt.highlight(hc);
 			if (interestingRect == null) {
 				interestingRect = velt.getVBounds();
@@ -275,22 +189,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 			vpwy.getWrapper().scrollTo(interestingRect.getBounds());
 		}
 	}
-
 	
-	private Set<PathwayElement> getComplexComponents(String comid) {
-		final Set<PathwayElement> result = new HashSet<PathwayElement>();
-		final Pathway pathway = desktop.getSwingEngine().getEngine()
-				.getActivePathway();
-		final String cid = comid;
-		for (final PathwayElement elt : pathway.getDataObjects()) {
-			final String id = elt.getDynamicProperty("reactome_id");
-			if (id != null && id.equalsIgnoreCase(cid)) {
-				result.add(elt);
-			}
-		}
-		return result;
-	}
-
 	public PvDesktop getDesktop() {
 		return desktop;
 	}
@@ -303,9 +202,7 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 		/**
 		 * Register visualization methods
 		 */
-
-		final VisualizationMethodRegistry reg = aDesktop
-				.getVisualizationManager().getVisualizationMethodRegistry();
+		VisualizationMethodRegistry reg = aDesktop.getVisualizationManager().getVisualizationMethodRegistry();
 
 		reg.registerComplexMethod(VisualisePercentScores.class.toString(),
 				new VisualizationMethodProvider() {
@@ -338,9 +235,10 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 				});
 		
 		// Register the menu items
-		desktop.registerMenuAction("Data", new VisualizationAction(aDesktop));
-		final PathwayElementMenuHook vizproHook = new PathwayElementMenuHook() {
-			private final VizProAction vizpro_action = new VizProAction(false);
+		vizAction = new VisualizationAction(aDesktop);
+		desktop.registerMenuAction("Data", vizAction);
+		PathwayElementMenuHook vizproHook = new PathwayElementMenuHook() {
+			private VizProAction vizpro_action = new VizProAction(false);
 
 			@Override
 			public void pathwayElementMenuHook(VPathwayElement e,
@@ -348,10 +246,6 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 				menu.add(vizpro_action);
 			}
 		};
-//		if (update()){
-//			desktop.addPathwayElementMenuHook(vizproHook);
-//			desktop.getSwingEngine().getEngine().addApplicationEventListener(this);
-//			}
 		createSidePanel();
 		desktop.addPathwayElementMenuHook(vizproHook);
 		desktop.getSwingEngine().getEngine().addApplicationEventListener(this);
@@ -372,50 +266,46 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 	public void selectionEvent(SelectionEvent e) {
 		switch (e.type) {
 		case SelectionEvent.OBJECT_ADDED:
-			if (e.selection.size() > 0) {
-				final Iterator<VPathwayElement> it = e.selection.iterator();
-				final VPathwayElement o = it.next();
+			if(e.selection.size() == 1) {
+				Iterator<VPathwayElement> it = e.selection.iterator();
+				VPathwayElement o = it.next();
 
-				if (o instanceof GeneProduct) {
-					if ((((GeneProduct) o).getPathwayElement()
-							.getDataNodeType().equalsIgnoreCase("complex"))) {
+				if(o instanceof GraphicsShape) {
+					PathwayElement elm = ((GraphicsShape)o).getPathwayElement();
+					if (elm.getDataNodeType().equalsIgnoreCase("complex")) {
 						
-						selectedElementId = ((GeneProduct) o)
-								.getPathwayElement().getElementID();
-						compwe = getComplexComponents(selectedElementId);
-						if (selectedElementId.length() > 1) {
-							if (sidebarTabbedPane.getSelectedComponent()
-									.equals(vizprotab)) {
+						selectedElementId = elm;
+						if (selectedElementId.getElementID().length() > 1) {
 								vizprotab.updatePathwayPanel(selectedElementId);
-								vizprotab.revalidate();
-								vizprotab.repaint();
-							}
 						} else {
-							vizprotab
-									.setPathwayPanelText("<html><br>&nbsp;&nbsp;&nbsp;&nbsp;DataNode does not have an identifier.</html>");
-							vizprotab.revalidate();
-							vizprotab.repaint();}
-					}else{
-						vizprotab
-						.setDataPanelText("<html><br>&nbsp;&nbsp;&nbsp;&nbsp;Not a Complex Node.</html>");
-					vizprotab
-					.setPathwayPanelText("<html><br>&nbsp;&nbsp;&nbsp;&nbsp;Not a Complex Node.</html>");}
+							vizprotab.setPathwayPanelText("<html><br>&nbsp;&nbsp;&nbsp;&nbsp;DataNode does not have an identifier.</html>");
+						}
+					} else {
+						vizprotab .setPathwayPanelText("<html><br>&nbsp;&nbsp;&nbsp;&nbsp;Not a Complex Node.</html>");
+					}
 					vizprotab.revalidate();
-					vizprotab.repaint();}
+					vizprotab.repaint();
+				}
+			} else {
+				// multiple elements selected
+				vizprotab.clear();
+				selectedElementId = null;
 			}
 			break;
-		case SelectionEvent.SELECTION_CLEARED:
+		default:
+			vizprotab.clear();
 			selectedElementId = null;
 			break;
 		}
-		vizprotab.revalidate();
-		vizprotab.repaint();
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
+		if(selectedElementId == null) {
+			
+		}
 		if (sidebarTabbedPane.getSelectedComponent().equals(vizprotab)) {
-			if (selectedElementId.length() > 0) {
+			if (selectedElementId.getElementID().length() > 0) {
 				vizprotab.updatePathwayPanel(selectedElementId);
 				vizprotab.revalidate();
 				vizprotab.repaint();
@@ -429,11 +319,75 @@ public class ComplexVizPlugin implements Plugin, DocumentListener,
 				.getActivePathway() != null){
 			hasPathway = true;	
 		}
-//		System.out.println(hasPathway);
 		return hasPathway;
 	}
 
-	public void updateData(final PathwayElement pwe) {
+	public void updateData(PathwayElement pwe) {
 		vizprotab.updateDataPanel(pwe);
 	}
+	
+	/**
+	 * Action / Menu item for opening the VizPro dialog
+	 */
+	public static class VisualizationAction extends AbstractAction implements GexManagerListener {
+		private MainPanel mainPanel;
+		private PvDesktop ste;
+
+		public VisualizationAction(PvDesktop ste) {
+			this.ste = ste;
+			putValue(NAME, "ComplexViz options");
+			mainPanel = ste.getSwingEngine().getApplicationPanel();
+			setEnabled(ste.getGexManager().isConnected());
+			ste.getGexManager().addListener(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			new ComplexVizDialog(ste.getVisualizationManager(), ste
+					.getSwingEngine().getFrame(), mainPanel).setVisible(true);
+		}
+
+		@Override
+		public void gexManagerEvent(GexManagerEvent e) {
+			boolean isConnected = ste.getGexManager().isConnected();
+			setEnabled(isConnected);
+		}
+	}
+
+	private class VizProAction extends AbstractAction {
+		
+		VizProAction(boolean b) {
+			putValue(NAME, "Highlight Complex / Components");
+		}
+
+		/**
+		 * called when the user selects the menu item
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			VPathway vPathway = desktop.getSwingEngine().getEngine()
+					.getActiveVPathway();
+			List<Graphics> selection = vPathway.getSelectedGraphics();
+			Graphics g = selection.get(0);
+			if (g instanceof GeneProduct) {
+				GeneProduct gp = (GeneProduct) g;
+				if (gp.getPathwayElement().getDataNodeType()
+						.equalsIgnoreCase("complex")) {
+					String query = gp.getPathwayElement().getElementID();
+					findComponents(query);
+				} else {
+					if(!gp.getPathwayElement().getDynamicProperty(COMPLEX_ID).isEmpty()){
+						String query = gp.getPathwayElement().getDynamicProperty(COMPLEX_ID);
+						findParentComplex(query);
+					}else{
+						JOptionPane.showMessageDialog(desktop.getFrame(),
+								"Please select a complex or complex component node.", "Wrong selection",
+								JOptionPane.ERROR_MESSAGE);	
+					}
+					
+				}
+			}
+		}
+	}
+
 }
