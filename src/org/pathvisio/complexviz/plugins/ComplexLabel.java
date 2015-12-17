@@ -1,6 +1,6 @@
-// PathVisio,
+// ComplexViz Plugin for PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2011 BiGCaT Bioinformatics
+// Copyright 2015 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,6 @@
 // limitations under the License.
 //
 package org.pathvisio.complexviz.plugins;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -49,9 +45,12 @@ import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.GeneProduct;
 import org.pathvisio.core.view.Graphics;
 import org.pathvisio.desktop.visualization.AbstractVisualizationMethod;
-import org.pathvisio.desktop.visualization.VisualizationMethod;
 import org.pathvisio.gui.dialogs.OkCancelDialog;
 import org.pathvisio.gui.util.FontChooser;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Visualization method to put the label pack on a DataNode. Since
@@ -62,25 +61,24 @@ import org.pathvisio.gui.util.FontChooser;
  * This visualization method also lets you use the id instead of the symbol as
  * label.
  */
-public class ComplexLabel extends AbstractVisualizationMethod implements
-		ActionListener {
-	static final String DISPLAY_ID = "Identifier";
-	static final String DISPLAY_LABEL = "Complex label";
-	static final String ACTION_APPEARANCE = "Appearance...";
+public class ComplexLabel extends AbstractVisualizationMethod implements ActionListener {
+	private static final String DISPLAY_ID = "Identifier";
+	private static final String DISPLAY_LABEL = "Complex label";
+	private static final String ACTION_APPEARANCE = "Appearance...";
 
-	static final Font DEFAULT_FONT = new Font("Arial narrow", Font.PLAIN, 10);
+	private static final Font DEFAULT_FONT = new Font("Arial narrow", Font.PLAIN, 10);
 
-	final static int ALIGN_CENTER = 0;
-	final static int ALIGN_LEFT = 1;
-	final static int ALIGN_RIGHT = 2;
+	private final static int ALIGN_CENTER = 0;
+	private final static int ALIGN_LEFT = 1;
+	private final static int ALIGN_RIGHT = 2;
 
-	String display = DISPLAY_LABEL;
+	private String display = DISPLAY_LABEL;
 
-	boolean adaptFontSize;
-	int align = ALIGN_CENTER;
+	private boolean adaptFontSize;
+	private int align = ALIGN_CENTER;
 
-	Font font;
-	Color fontColor;
+	private Font font;
+	private Color fontColor;
 	private int LABEL_WRAP = 15;
 
 	// The LineBreakMeasurer used to line-break the paragraph.
@@ -107,8 +105,7 @@ public class ComplexLabel extends AbstractVisualizationMethod implements
 
 	public JPanel getConfigurationPanel() {
 		JPanel panel = new JPanel();
-		FormLayout layout = new FormLayout(
-				"pref, 4dlu, pref, 4dlu, pref, 8dlu, pref", "pref");
+		FormLayout layout = new FormLayout("pref, 4dlu, pref, 4dlu, pref, 8dlu, pref", "pref");
 		panel.setLayout(layout);
 
 		JRadioButton radioId = new JRadioButton(DISPLAY_ID);
@@ -160,11 +157,10 @@ public class ComplexLabel extends AbstractVisualizationMethod implements
 		preview.setBackground(Color.WHITE);
 		preview.setFont(getFont());
 
-		final JButton font = new JButton("...");
+		JButton font = new JButton("...");
 		font.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Font f = FontChooser.showDialog(null,
-						(Component) e.getSource(), getFont());
+				Font f = FontChooser.showDialog(null, (Component) e.getSource(), getFont());
 				if (f != null) {
 					setFont(f);
 					preview.setText(f.getFamily());
@@ -172,8 +168,7 @@ public class ComplexLabel extends AbstractVisualizationMethod implements
 				}
 			}
 		});
-		final JComboBox align = new JComboBox(new String[] { "Center", "Left",
-				"Right" });
+		JComboBox align = new JComboBox(new String[] { "Center", "Left", "Right" });
 		align.setSelectedIndex(getAlignment());
 
 		align.addActionListener(new ActionListener() {
@@ -182,8 +177,7 @@ public class ComplexLabel extends AbstractVisualizationMethod implements
 			}
 		});
 
-		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(
-				"pref, 4dlu, fill:pref:grow, 4dlu, pref", ""));
+		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("pref, 4dlu, fill:pref:grow, 4dlu, pref", ""));
 		builder.setDefaultDialogBorder();
 		builder.append("Font: ", preview, font);
 		builder.nextLine();
@@ -216,15 +210,13 @@ public class ComplexLabel extends AbstractVisualizationMethod implements
 
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {
 		if (g instanceof GeneProduct) {
-			if (g.getPathwayElement().getDataNodeType()
-					.equalsIgnoreCase("complex")) {
+			if (g.getPathwayElement().getDataNodeType().equalsIgnoreCase("complex")) {
 				String label = getLabelText((GeneProduct) g);
 				if (label == null || label.length() == 0) {
 					return;
 				}
 
 				Font f = getFont();
-
 				Shape region;
 
 				if (isUseProvidedArea()) {
@@ -240,21 +232,11 @@ public class ComplexLabel extends AbstractVisualizationMethod implements
 					g2d.fill(area);
 				}
 				g2d.setColor(Color.BLACK);
-
 				g2d.clip(region);
-
-				if (adaptFontSize) {
-					// TODO: adapt font size for awt
-					// f = SwtUtils.adjustFontSize(f, new Dimension(area.width,
-					// area.height), label, g2d);
-				}
 				g2d.setFont(f);
-
 				g2d.setColor(getFontColor());
 
-				TextLayout tl = new TextLayout(label, g2d.getFont(),
-						g2d.getFontRenderContext());
-				
+				TextLayout tl = new TextLayout(label, g2d.getFont(), g2d.getFontRenderContext());
 				AttributedString labelString = new AttributedString(label);
 				
 				// Create a new LineBreakMeasurer from the paragraph.
@@ -317,40 +299,25 @@ public class ComplexLabel extends AbstractVisualizationMethod implements
 	}
 
 	public Component visualizeOnToolTip(Graphics g) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	void setAdaptFontSize(boolean adapt) {
-		adaptFontSize = adapt;
-		modified();
-	}
-
-	void setFont(Font f) {
+	private void setFont(Font f) {
 		if (f != null) {
 			font = f;
 			modified();
 		}
 	}
-
-	void setFontColor(Color fc) {
-		fontColor = fc;
-		modified();
-	}
-
-	Color getFontColor() {
+	
+	private Color getFontColor() {
 		return fontColor == null ? Color.BLACK : fontColor;
 	}
 
-	int getFontSize() {
-		return getFont().getSize();
-	}
-
-	Font getFont() {
+	private Font getFont() {
 		return getFont(false);
 	}
 
-	Font getFont(boolean adjustZoom) {
+	private Font getFont(boolean adjustZoom) {
 		Font f = font == null ? DEFAULT_FONT : font;
 		if (adjustZoom) {
 			// int fs =
@@ -366,7 +333,6 @@ public class ComplexLabel extends AbstractVisualizationMethod implements
 			if (DISPLAY_LABEL.equals(display)) {
 				text = g.getPathwayElement().getTextLabel();
 				text = wrap(text);
-//				System.out.println("lbl : " + text);
 			} else if (DISPLAY_ID.equals(display)) {
 				text = g.getPathwayElement().getElementID();
 			}
@@ -386,12 +352,12 @@ public class ComplexLabel extends AbstractVisualizationMethod implements
 		return sb.toString();
 	}
 
-	static final String XML_ATTR_DISPLAY = "display";
-	static final String XML_ATTR_ADAPT_FONT = "adjustFontSize";
-	static final String XML_ATTR_FONTDATA = "font";
-	static final String XML_ELM_FONTCOLOR = "font-color";
-	static final String XML_ATTR_OVERLAY = "overlay";
-	static final String XML_ATTR_ALIGN = "alignment";
+	private static final String XML_ATTR_DISPLAY = "display";
+	private static final String XML_ATTR_ADAPT_FONT = "adjustFontSize";
+	private static final String XML_ATTR_FONTDATA = "font";
+	private static final String XML_ELM_FONTCOLOR = "font-color";
+	private static final String XML_ATTR_OVERLAY = "overlay";
+	private static final String XML_ATTR_ALIGN = "alignment";
 
 	public Element toXML() {
 		Element elm = super.toXML();

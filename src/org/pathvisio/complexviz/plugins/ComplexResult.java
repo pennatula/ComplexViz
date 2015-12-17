@@ -1,6 +1,6 @@
-// PathVisio,
+// ComplexViz Plugin for PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2011 BiGCaT Bioinformatics
+// Copyright 2015 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,16 +35,13 @@ import org.pathvisio.desktop.visualization.Criterion;
 public class ComplexResult
 {
 	public ComplexStatisticsTableModel stm;
-	int bigN = 0;
-	int bigR = 0;
 	public Criterion crit;
 	public File pwFile;
 	public CachedData gex;
 	public IDMapper gdb;
 	public String methodDesc;
 
-	public void save (File f) throws IOException
-	{
+	public void save (File f) throws IOException {
 		PrintStream out = new PrintStream (new FileOutputStream(f));
 
 		out.println ("Statistics results for " + new Date());

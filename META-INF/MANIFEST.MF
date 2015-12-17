@@ -2,10 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ComplexViz
 Bundle-SymbolicName: org.pathvisio.complexviz
-Bundle-Version: 1.0.0
-Export-Package: org.pathvisio.complexviz,
- org.pathvisio.complexviz.gui,
- org.pathvisio.complexviz.plugins
+Bundle-Version: 0.1.0
+Export-Package: org.pathvisio.complexviz
 Import-Package: org.osgi.framework;version="1.5.0"
 Require-Bundle: org.pathvisio.desktop;bundle-version="3.2.0",
  org.bridgedb;bundle-version="2.0.0",

@@ -1,6 +1,19 @@
-/**
- * 
- */
+// ComplexViz Plugin for PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2015 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 package org.pathvisio.complexviz.gui;
 
 import java.awt.BorderLayout;
@@ -20,27 +33,26 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import org.bridgedb.Xref;
 import org.bridgedb.gui.SimpleFileFilter;
-import org.pathvisio.complexviz.plugins.VisualisePercentScores;
 import org.pathvisio.complexviz.plugins.Column;
 import org.pathvisio.complexviz.plugins.ComplexResult;
 import org.pathvisio.complexviz.plugins.ComplexStatisticsResult;
 import org.pathvisio.complexviz.plugins.ComplexStatisticsTableModel;
+import org.pathvisio.complexviz.plugins.VisualisePercentScores;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.ObjectType;
@@ -50,7 +62,6 @@ import org.pathvisio.data.DataException;
 import org.pathvisio.data.IRow;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.util.TextFieldUtils;
-import org.pathvisio.desktop.visualization.ColorSetManager;
 import org.pathvisio.desktop.visualization.Criterion;
 import org.pathvisio.desktop.visualization.Criterion.CriterionException;
 import org.pathvisio.gui.SwingEngine;
@@ -80,13 +91,8 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 	private SwingEngine se;
 	private JTable tblResult;
 	private JLabel lblResult;
-	private ButtonGroup colorstyle;
-	private JRadioButton gradientbutton;
-	private JRadioButton rulebutton;
 	private final VisualisePercentScores method;
-	private ColorSetManager csm;
 	private JButton vizbtn;
-	private JPanel clrPanel;
 	private JPanel complexPanel;
 	private String COMPLEX_ID = "complex_id";
 
@@ -110,9 +116,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		try {
 			critPanel = new CriterionPanel(gm.getCurrentGex().getSampleNames());
 		} catch (DataException ex) {
-			JOptionPane
-					.showMessageDialog(se.getApplicationPanel(),
-							"Could not open criterion panel because of a database access error");
+			JOptionPane.showMessageDialog(se.getApplicationPanel(), "Could not open criterion panel because of a database access error");
 		}
 		JTextArea info = new JTextArea("A Percentage Score will be calculated for each complex on the pathway. \n" +
 				"X = number of unique components qualifying the criterion\n" +
@@ -143,15 +147,6 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		complexPanel.add(lblResult);
 
 		tblResult = new JTable();
-		tblResult.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent me) {
-				int row = tblResult.getSelectedRow();
-				final ComplexStatisticsResult sr = ((ComplexStatisticsTableModel) (tblResult
-						.getModel())).getRow(row);
-
-				// se.openPathway(sr.getFile());
-			}
-		});
 		JPanel tblPanel = new JPanel();
 		JScrollPane scrollPane = new JScrollPane(tblResult);
 		tblPanel.add(scrollPane, BorderLayout.CENTER);
@@ -160,7 +155,6 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		/*
 		 * Visualization
 		 */
-		
 		btnCalc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				if (critPanel.getCriterion().getExpression().trim().equals("")) {
@@ -195,7 +189,6 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 	 * the color rule panel
 	 */
 	private static class CriterionPanel extends JPanel {
-		private ComplexResult result;
 		private JTextField txtExpr;
 		private JLabel lblError;
 		private static String CRIT_VALID = "OK";
@@ -244,7 +237,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 
 			add(txtExpr, cc.xyw(2, 4, 3));
 
-			final JList lstOperators = new JList(Criterion.TOKENS);
+			JList lstOperators = new JList(Criterion.TOKENS);
 			add(new JScrollPane(lstOperators), cc.xy(2, 6));
 
 			lstOperators.addMouseListener(new MouseAdapter() {
@@ -266,7 +259,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 				}
 			});
 
-			final JList lstSamples = new JList(sampleNames.toArray());
+			JList lstSamples = new JList(sampleNames.toArray());
 
 			lstSamples.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent me) {
@@ -306,11 +299,8 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		jfc.setFileFilter(new SimpleFileFilter("Tab delimited text", "*.txt",
 				true));
 		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
-		// jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(StatisticsPreference.STATS_DIR_LAST_USED_RESULTS));
 		if (jfc.showDialog(se.getApplicationPanel(), "Save") == JFileChooser.APPROVE_OPTION) {
 			File f = jfc.getSelectedFile();
-			// PreferenceManager.getCurrent().setFile(StatisticsPreference.STATS_DIR_LAST_USED_RESULTS,
-			// jfc.getCurrentDirectory());
 			if (!f.toString().endsWith(".txt")) {
 				f = new File(f + ".txt");
 			}
@@ -352,9 +342,7 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 					}
 				}
 			}
-			// System.out.println(cidset);
 			for (String cid : cidset) {
-				// System.out.println(cid);
 				componentset = new HashSet<Xref>();
 				for (PathwayElement component : pathway.getDataObjects()) {
 					String componentid = component
@@ -364,7 +352,6 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 						componentset.add(component.getXref());
 					}
 				}
-				// System.out.println(cid + " : " + componentset);
 				complexidcomponentmap.put(cid, componentset);
 			}
 			result = calculatePercent();
@@ -375,7 +362,6 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 				// replace temp tableModel with definitive one
 				tblResult.setModel(result.stm);
 				ComplexStatisticsPanel.this.result = result;
-				// dlg.pack();
 			}
 		} catch (ConverterException e) {
 			// TODO Auto-generated catch block
@@ -405,11 +391,9 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		for (String cid : cidset) {
 			ComplexStatisticsResult spr = calculateComplexPercent(cid);
 			complexidpercentmap.put(cid, spr.getZScore());
-			// method.setPercentValues(cid, spr.getZScore());
 			result.stm.addRow(spr);
 		}
-		 method.setPercentValues(complexidpercentmap);
-		// System.out.println(complexidpercentmap.entrySet());
+		method.setPercentValues(complexidpercentmap);
 		result.stm.sort();
 		return result;
 	}
@@ -423,18 +407,11 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 		float complexComponentTotal = componentsRefs.size()-1;
 
 		for (Xref ref : componentsRefs) {
-//			System.out.println(ref.getId() + " : data : "
-//					+ gm.getCachedData().getData(ref));
 			if (evaluateRef(ref)) {
 				complexComponentPositive++;
 			}
 		}
-//		System.out.println("complex : " + cid + " : positive : "
-//				+ complexComponentPositive + " : total : "
-//				+ complexComponentTotal);
-//		System.out.println("ratio:"+complexComponentPositive / complexComponentTotal);
 		float percent = (complexComponentPositive / complexComponentTotal) * 100;
-//		System.out.println("percent : " + percent);
 		complexidpercentmap.put(cid, percent);
 		ComplexStatisticsResult spr = new ComplexStatisticsResult(
 				idnamemap.get(cid), cid, complexComponentPositive,
@@ -465,20 +442,15 @@ public class ComplexStatisticsPanel extends JPanel implements ActionListener {
 					Logger.log.error("Unknown error during statistics", e);
 				}
 			}
-
 		}
-
 		return eval;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		OkCancelDialog optionsDlg = new OkCancelDialog(null,
-		 "Percent score visualisation", (Component) e.getSource(), true,
-		 false);
-		 optionsDlg.setDialogComponent(new ColourComplexesPanel(method, csm));
+		OkCancelDialog optionsDlg = new OkCancelDialog(null, "Percent score visualisation", (Component) e.getSource(), true, false);
+		 optionsDlg.setDialogComponent(new ColourComplexesPanel(method));
 		 optionsDlg.pack();
 		 optionsDlg.setVisible(true);
-
 	}
 }
